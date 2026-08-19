@@ -1,6 +1,6 @@
-# 🚗 Gestion des Interventions Atelier Véhicule - Backend
+#  Gestion des Interventions Atelier Véhicule - Backend
 
-## 📌 Présentation
+##  Présentation
 
 Cette application permet à un atelier automobile de gérer le cycle complet d'une intervention véhicule, depuis l'accueil client jusqu'à la restitution du véhicule.
 
@@ -18,7 +18,7 @@ Le backend expose une API REST sécurisée permettant :
 
 ---
 
-# 🛠️ Technologies utilisées
+#  Technologies utilisées
 
 - Java 17
 - Spring Boot 3
