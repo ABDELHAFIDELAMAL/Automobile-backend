@@ -286,7 +286,7 @@ public class InterventionService implements IInterventionService {
 
         return interventionRepository
                 .findByDateRestitutionPrevueBeforeAndStatusNot(
-                        LocalDate.now(),
+                        LocalDate.now().atStartOfDay(),
                         Status.RESTITUEE
                 );
     }

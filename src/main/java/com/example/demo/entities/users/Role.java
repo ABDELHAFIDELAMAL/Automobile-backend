@@ -4,5 +4,6 @@ public enum Role {
     TECHNICIEN ,
     ADMIN ,
     CLIENT ,
-    MANAGER
+    MANAGER ,
+    CONSEILLER
 }

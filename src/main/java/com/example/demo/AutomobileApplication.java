@@ -35,6 +35,8 @@ public class AutomobileApplication {
     @Bean
     CommandLineRunner start(UserService userService , InterventionService interventionService, MecanicienService mecanicienService, VehiculeService vehiculeService, HistoriqueService historiqueService){
         return args -> {
+
+
             Utilisateur utilisateur = new Utilisateur();
             utilisateur.ajouterRole(Role.ADMIN);
             utilisateur.ajouterRole(Role.ADMIN);
@@ -57,7 +59,7 @@ public class AutomobileApplication {
 
             Intervention intervention = new Intervention();
             intervention.setStatus(Status.RECUE);
-            intervention.setDiagnostic("diagnostic N'0");
+            intervention.setDiagnostic("diagnostic Numero 001");
             intervention.setPriorite(Priorite.MOYENNE);
             intervention.setType(TypeIntervention.DIAGNOSTIC);
             intervention.setDateCloture(LocalDateTime.now());
@@ -97,6 +99,128 @@ public class AutomobileApplication {
             hist.setNouveauStatus(Status.DIAGNOSTIC_EN_COURS);
 
             historiqueService.createHistorique(hist);
+
+
+
+
+
+
+
+
+
+            Utilisateur conseiller = new Utilisateur();
+            conseiller.ajouterRole(Role.CONSEILLER);
+            conseiller.setNom("BENNANI");
+            conseiller.setPrenom("Youssef");
+            conseiller.setPassword("at1020");
+            conseiller.setEnabled(true);
+            conseiller.setEmail("youssef.bennani@capgemini.com");
+            userService.createUtilisateur(conseiller);
+
+            Utilisateur manager = new Utilisateur();
+            manager.ajouterRole(Role.MANAGER); // Ou Role.MANAGER selon votre Enum
+            manager.setNom("ALAMI");
+            manager.setPrenom("Amine");
+            manager.setPassword("mgr3000");
+            manager.setEnabled(true);
+            manager.setEmail("amine.alami@capgemini.com");
+            userService.createUtilisateur(manager);
+
+
+            // ==========================================
+            // 2. ÉQUIPE DE MÉCANICIENS (SPÉCIALITÉS COMPLÈTES)
+            // ==========================================
+
+            // Mécanicien 1 : Électricité / Électronique (Disponible)
+            Mecanicien mecElec = new Mecanicien();
+            mecElec.setSpecialite(Specialite.ELECTRICITE_ELECTRONIQUE);
+            mecElec.setNom("Hassan Bouras");
+            mecElec.setDisponible(true);
+            mecanicienService.createMecanicien(mecElec);
+
+
+            Mecanicien mecPneu = new Mecanicien();
+            mecPneu.setSpecialite(Specialite.PNEUMATIQUE);
+            mecPneu.setNom("Karim Tazi");
+            mecPneu.setDisponible(false);
+            mecanicienService.createMecanicien(mecPneu);
+
+
+            Vehicule vReel = new Vehicule();
+            vReel.setImmatriculation("Maroc-99-B-1234");
+            vReel.setKilometrage(85000);
+            vReel.setModele("Golf 7");
+            vReel.setAnnee(2019);
+            vReel.setMarque("Volkswagen");
+            vReel.setClientFictif(false);
+            vehiculeService.createVehicule(vReel);
+
+            Vehicule vFictif = new Vehicule();
+            vFictif.setImmatriculation("Maroc-77-X-5678");
+            vFictif.setKilometrage(12000);
+            vFictif.setModele("Clio 5");
+            vFictif.setAnnee(2021);
+            vFictif.setMarque("Renault");
+            vFictif.setClientFictif(true);
+            vehiculeService.createVehicule(vFictif);
+
+
+            Intervention intRetard = new Intervention();
+            intRetard.setStatus(Status.EN_REPARATION);
+            intRetard.setPriorite(Priorite.HAUTE);
+            intRetard.setType(TypeIntervention.REPARATION);
+            intRetard.setDescription("Changement d'embrayage complet");
+            intRetard.setDiagnostic("Butée d'embrayage totalement détruite");
+            intRetard.setCoutEstime(4500.00);
+            intRetard.setDateDepot(LocalDateTime.now().minusDays(5));
+            intRetard.setDateRestitutionPrevue(LocalDateTime.now().minusDays(1));
+            intRetard.setMecanicien(mecElec);
+            intRetard.setVehicule(vReel);
+            Intervention savedIntRetard = interventionService.createIntervention(intRetard);
+
+            HistoriqueIntervention histRetard = new HistoriqueIntervention();
+            histRetard.setCommentaire("Passage en réparation après validation du devis par téléphone");
+            histRetard.setDate(LocalDateTime.now().minusDays(4));
+            histRetard.setAuteur("Youssef BENNANI");
+            histRetard.setIntervention(savedIntRetard);
+            histRetard.setAncienStatus(Status.DEVIS_A_VALIDER);
+            histRetard.setNouveauStatus(Status.EN_REPARATION);
+            historiqueService.createHistorique(histRetard);
+
+
+            // --- CAS 2 : NOUVELLE INTERVENTION DU JOUR (Statut REÇUE) ---
+            Intervention intNouvelle = new Intervention();
+            intNouvelle.setStatus(Status.RECUE); // Statut initial d'arrivée
+            intNouvelle.setPriorite(Priorite.BASSE);
+            intNouvelle.setType(TypeIntervention.PNEUMATIQUES);
+            intNouvelle.setDescription("Changement de 2 pneus avant + Parallélisme");
+            intNouvelle.setDateDepot(LocalDateTime.now()); // Reçue aujourd'hui
+            intNouvelle.setDateRestitutionPrevue(LocalDateTime.now().plusHours(4));
+            intNouvelle.setVehicule(vFictif);
+            // Pas de mécanicien ni de coût estimé encore (Conforme aux règles RG-AUTO-05/06)
+            Intervention savedIntNouvelle = interventionService.createIntervention(intNouvelle);
+
+            HistoriqueIntervention histNouvelle = new HistoriqueIntervention();
+            histNouvelle.setCommentaire("Ouverture du dossier d'accueil à l'atelier");
+            histNouvelle.setDate(LocalDateTime.now());
+            histNouvelle.setAuteur("Youssef BENNANI");
+            histNouvelle.setIntervention(savedIntNouvelle);
+            histNouvelle.setAncienStatus(null);
+            histNouvelle.setNouveauStatus(Status.RECUE);
+            historiqueService.createHistorique(histNouvelle);
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -17,7 +17,7 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/h2-console/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 .formLogin(Customizer.withDefaults());
