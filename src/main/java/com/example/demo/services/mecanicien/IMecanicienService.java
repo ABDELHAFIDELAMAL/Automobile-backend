@@ -5,8 +5,11 @@ import com.example.demo.entities.Mecanicien;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public interface IMecanicienService {
+    List<Mecanicien> getAllMecaniciens();
+    Mecanicien getMecanicienById(Long id);
     List<Mecanicien> getMecaniciensDisponibles(boolean disponible);
     Mecanicien createMecanicien(Mecanicien mecanicien);
     Mecanicien updateMecanicien(Long id , Mecanicien mecanicien);

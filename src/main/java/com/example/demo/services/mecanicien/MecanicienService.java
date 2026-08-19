@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -22,6 +23,18 @@ public class MecanicienService implements IMecanicienService {
 
     public MecanicienService(MecanicienRepository mecanicienRepository) {
         this.mecanicienRepository = mecanicienRepository;
+    }
+
+    @Override
+    public List<Mecanicien> getAllMecaniciens() {
+        return mecanicienRepository.findAll();
+    }
+
+    @Override
+    public Mecanicien getMecanicienById(Long id) {
+        return mecanicienRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException(
+                        "Mecanicien not found with id : " + id));
     }
 
     @Override

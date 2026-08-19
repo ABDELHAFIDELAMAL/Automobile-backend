@@ -7,7 +7,7 @@ import com.example.demo.repositories.MecanicienRepository;
 import com.example.demo.repositories.VehiculeRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-import java.math.BigDecimal;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,6 +32,11 @@ public class InterventionService implements IInterventionService {
             this.historiqueRepository = historiqueRepository;
             this.vehiculeRepository = vehiculeRepository;
         }
+
+    @Override
+    public List<Intervention> getAllInterventions() {
+        return interventionRepository.findAll();
+    }
 
     @Override
     public Intervention createIntervention(Intervention intervention) {
@@ -100,7 +105,7 @@ public class InterventionService implements IInterventionService {
                     "Le coût estimé doit être supérieur à 0");
         }
 
-        intervention.setCoutEstime(BigDecimal.valueOf(cout));
+        intervention.setCoutEstime(cout);
 
         if (intervention.getStatus() == Status.DIAGNOSTIC_EN_COURS) {
             intervention.setStatus(Status.DEVIS_A_VALIDER);
@@ -296,7 +301,7 @@ public class InterventionService implements IInterventionService {
         for (Intervention intervention : interventions) {
 
             if (intervention.getCoutEstime() != null) {
-                somme += intervention.getCoutEstime().doubleValue();
+                somme += intervention.getCoutEstime();
             }
         }
 

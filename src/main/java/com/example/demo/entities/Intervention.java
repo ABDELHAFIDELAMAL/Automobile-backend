@@ -1,5 +1,6 @@
 package com.example.demo.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -22,6 +23,7 @@ public class Intervention {
     private Long id;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "vehicule_id")
     private Vehicule vehicule;
 
@@ -40,10 +42,11 @@ public class Intervention {
     private Priorite priorite;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "mecanicien_id")
     private Mecanicien mecanicien;
 
-    private BigDecimal coutEstime;
+    private Double coutEstime;
 
     private LocalDateTime dateDepot;
 

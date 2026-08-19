@@ -1,7 +1,6 @@
-// ===================== HISTORIQUE INTERVENTION =====================
-
 package com.example.demo.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -22,6 +21,7 @@ public class HistoriqueIntervention {
 
     @ManyToOne
     @JoinColumn(name = "intervention_id")
+    @JsonIgnore
     private Intervention intervention;
 
     @Enumerated(EnumType.STRING)
