@@ -44,7 +44,7 @@ public class InterventionService implements IInterventionService {
     }
 
     @Override
-    public Intervention updateIntervnetion(Long id, Intervention intervention) {
+    public Intervention updateIntervention(Long id, Intervention intervention) {
 
         Intervention interv = interventionRepository.findById(id)
                 .orElseThrow(() ->

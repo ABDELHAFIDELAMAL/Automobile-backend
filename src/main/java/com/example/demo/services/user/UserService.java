@@ -135,7 +135,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public Utilisateur findByEmail(String email) {
+    public Optional<Utilisateur> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 }

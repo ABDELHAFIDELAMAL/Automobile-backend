@@ -31,8 +31,8 @@ public class InterventionController  {
     }
 
     @PutMapping(path = "/update/{id}")
-    public Intervention updateIntervnetion(@PathVariable Long id,@RequestBody Intervention intervention) {
-        return interventionService.updateIntervnetion(id , intervention);
+    public Intervention updateIntervention(@PathVariable Long id,@RequestBody Intervention intervention) {
+        return interventionService.updateIntervention(id , intervention);
     }
 
     @PatchMapping(path = "assign/{id}")
