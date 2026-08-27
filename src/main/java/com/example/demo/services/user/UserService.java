@@ -133,4 +133,9 @@ public class UserService implements IUserService {
 
         userRepository.save(user);
     }
+
+    @Override
+    public Utilisateur findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
 }

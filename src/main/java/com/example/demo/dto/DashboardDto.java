@@ -2,9 +2,6 @@ package com.example.demo.dto;
 
 import com.example.demo.entities.Intervention;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.util.List;
 import java.util.Map;
 

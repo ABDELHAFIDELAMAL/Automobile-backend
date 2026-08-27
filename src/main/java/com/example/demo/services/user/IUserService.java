@@ -17,5 +17,5 @@ public interface IUserService {
     Utilisateur desactiver(Long id);
     Utilisateur changerMotdePass(Long id , String ancienMdps , String nouveauMdps);
     void affecterRole(Long id , Role role);
-
+    Utilisateur findByEmail(String email);
 }
