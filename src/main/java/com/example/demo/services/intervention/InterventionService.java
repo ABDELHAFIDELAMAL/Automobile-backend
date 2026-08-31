@@ -1,6 +1,8 @@
 package com.example.demo.services.intervention;
 
 import com.example.demo.entities.*;
+import com.example.demo.enums.Status;
+import com.example.demo.enums.TypeIntervention;
 import com.example.demo.repositories.HistoriqueRepository;
 import com.example.demo.repositories.InterventionRepository;
 import com.example.demo.repositories.MecanicienRepository;

@@ -2,14 +2,13 @@ package com.example.demo.repositories;
 
 import com.example.demo.entities.Intervention;
 import com.example.demo.entities.Mecanicien;
-import com.example.demo.entities.Status;
-import com.example.demo.entities.TypeIntervention;
+import com.example.demo.enums.Status;
+import com.example.demo.enums.TypeIntervention;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 

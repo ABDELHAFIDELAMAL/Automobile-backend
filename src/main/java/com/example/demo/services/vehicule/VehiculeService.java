@@ -2,21 +2,18 @@ package com.example.demo.services.vehicule;
 
 import com.example.demo.entities.Intervention;
 import com.example.demo.entities.Mecanicien;
-import com.example.demo.entities.Status;
+import com.example.demo.enums.Status;
 import com.example.demo.entities.Vehicule;
 import com.example.demo.repositories.MecanicienRepository;
 import com.example.demo.repositories.VehiculeRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @Transactional
 public class VehiculeService implements IVehiculeService {
-
 
     private final VehiculeRepository vehiculeRepository;
     private final MecanicienRepository mecanicienRepository;

@@ -1,6 +1,6 @@
 package com.example.demo.services.vehicule;
 
-import com.example.demo.entities.Status;
+import com.example.demo.enums.Status;
 import com.example.demo.entities.Vehicule;
 import java.util.List;
 

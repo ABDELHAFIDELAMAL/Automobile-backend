@@ -1,6 +1,6 @@
 package com.example.demo.auth;
 
-import com.example.demo.entities.users.Role;
+import com.example.demo.enums.Role;
 import com.example.demo.entities.users.Utilisateur;
 import com.example.demo.jwt.JwtService;
 import com.example.demo.repositories.users.UtilisateurRepository;
@@ -10,11 +10,13 @@ import com.example.demo.exceptions.EmailAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
+import java.util.Map;
 
 
 @Service
@@ -26,9 +28,10 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final JwtEncoder jwtEncoder;
 
     @Transactional
-    public AuthResponse register(RegisterRequest request) throws EmailAlreadyExistsException {
+    public Map<String, String> register(RegisterRequest request) throws EmailAlreadyExistsException {
 
         if (utilisateurRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new EmailAlreadyExistsException("Cet email est deja utilise.");
@@ -43,26 +46,19 @@ public class AuthService {
 
         utilisateurRepository.save(utilisateur);
 
-        String token = jwtService.generateToken(utilisateur.getEmail());
-        return new AuthResponse(token);
+        String jwt = jwtService.generateToken(request.getEmail());
+        return Map.of("Access-Token", jwt);
     }
 
-    public AuthResponse login(LoginRequest request) {
-        authenticationManager.authenticate(
+    public Map<String , String> login(LoginRequest request) throws AuthenticationException {
+        Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         request.getPassword()
                 )
         );
-
-        try{
-            Optional<Utilisateur> utilisateur = utilisateurRepository.findByEmail(request.getEmail());
-            String token = jwtService.generateToken(utilisateur.get().getEmail());
-            return new AuthResponse(token);
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Utilisateur non trouve");
-        }
-
+        String jwt = jwtService.generateToken(request.getEmail());
+        return Map.of("Access-Token", jwt);
     }
 
 

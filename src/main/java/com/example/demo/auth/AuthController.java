@@ -4,7 +4,10 @@ import com.example.demo.exceptions.EmailAlreadyExistsException;
 import com.example.demo.request.LoginRequest;
 import com.example.demo.request.RegisterRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -18,14 +21,19 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) throws EmailAlreadyExistsException {
-        return ResponseEntity.ok(authService.register(request));
+    public Map<String , String> register(@RequestBody RegisterRequest request) throws EmailAlreadyExistsException {
+        return authService.register(request);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
-        return ResponseEntity.ok(authService.login(request));
+    public Map<String , String> login(@RequestBody LoginRequest request) {
+        return authService.login(request);
     }
 
-    // /logout est gère directement par Spring Security
+
+    @GetMapping("/profile")
+    public Authentication authentication(Authentication authentication){
+        return authentication;
+    }
+
 }

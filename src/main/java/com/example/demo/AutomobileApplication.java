@@ -1,9 +1,12 @@
 package com.example.demo;
 
 import com.example.demo.entities.*;
-import com.example.demo.entities.users.Role;
+import com.example.demo.enums.Role;
 import com.example.demo.entities.users.Utilisateur;
-import com.example.demo.repositories.users.UtilisateurRepository;
+import com.example.demo.enums.Priorite;
+import com.example.demo.enums.Specialite;
+import com.example.demo.enums.Status;
+import com.example.demo.enums.TypeIntervention;
 import com.example.demo.services.historique.HistoriqueService;
 import com.example.demo.services.intervention.InterventionService;
 import com.example.demo.services.mecanicien.MecanicienService;
@@ -13,23 +16,13 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @SpringBootApplication
 public class AutomobileApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(AutomobileApplication.class, args);
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -118,7 +111,8 @@ public class AutomobileApplication {
             userService.createUtilisateur(conseiller);
 
             Utilisateur manager = new Utilisateur();
-            manager.ajouterRole(Role.MANAGER); // Ou Role.MANAGER selon votre Enum
+            manager.ajouterRole(Role.MANAGER);// Ou Role.MANAGER selon votre Enum
+            manager.ajouterRole(Role.TECHNICIEN);
             manager.setNom("ALAMI");
             manager.setPrenom("Amine");
             manager.setPassword("mgr3000");
@@ -126,12 +120,6 @@ public class AutomobileApplication {
             manager.setEmail("amine.alami@capgemini.com");
             userService.createUtilisateur(manager);
 
-
-            // ==========================================
-            // 2. ÉQUIPE DE MÉCANICIENS (SPÉCIALITÉS COMPLÈTES)
-            // ==========================================
-
-            // Mécanicien 1 : Électricité / Électronique (Disponible)
             Mecanicien mecElec = new Mecanicien();
             mecElec.setSpecialite(Specialite.ELECTRICITE_ELECTRONIQUE);
             mecElec.setNom("Hassan Bouras");
@@ -208,21 +196,6 @@ public class AutomobileApplication {
             histNouvelle.setAncienStatus(null);
             histNouvelle.setNouveauStatus(Status.RECUE);
             historiqueService.createHistorique(histNouvelle);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
         };

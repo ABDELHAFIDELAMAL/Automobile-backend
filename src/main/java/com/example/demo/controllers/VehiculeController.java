@@ -1,6 +1,6 @@
 package com.example.demo.controllers;
 
-import com.example.demo.entities.Status;
+import com.example.demo.enums.Status;
 import com.example.demo.entities.Vehicule;
 import com.example.demo.services.vehicule.IVehiculeService;
 import org.springframework.web.bind.annotation.*;
@@ -64,7 +64,7 @@ public class VehiculeController {
         return vehiculeService.getVehiculeByStatus(status);
     }
 
-    @GetMapping("/recherche")
+    @GetMapping("/search")
     public List<Vehicule> recherche(@RequestParam String text) {
         return vehiculeService.rechercher(text);
     }

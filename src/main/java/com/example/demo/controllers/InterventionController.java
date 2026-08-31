@@ -3,8 +3,8 @@ package com.example.demo.controllers;
 
 import com.example.demo.entities.Intervention;
 import com.example.demo.entities.Mecanicien;
-import com.example.demo.entities.Status;
-import com.example.demo.entities.TypeIntervention;
+import com.example.demo.enums.Status;
+import com.example.demo.enums.TypeIntervention;
 import com.example.demo.services.intervention.IInterventionService;
 import org.springframework.web.bind.annotation.*;
 

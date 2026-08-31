@@ -1,6 +1,6 @@
 package com.example.demo.controllers.users;
 
-import com.example.demo.entities.users.Role;
+import com.example.demo.enums.Role;
 import com.example.demo.entities.users.Utilisateur;
 import com.example.demo.services.user.IUserService;
 import org.springframework.web.bind.annotation.*;
