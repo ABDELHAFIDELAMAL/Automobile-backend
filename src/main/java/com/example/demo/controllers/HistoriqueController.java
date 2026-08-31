@@ -3,6 +3,7 @@ package com.example.demo.controllers;
 import com.example.demo.entities.HistoriqueIntervention;
 import com.example.demo.services.historique.HistoriqueService;
 import com.example.demo.services.historique.IHistoriqueService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class HistoriqueController  {
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('USER')")
     public List<HistoriqueIntervention> getAllHistoriques() {
         return historiqueService.getAllHistoriques();
     }

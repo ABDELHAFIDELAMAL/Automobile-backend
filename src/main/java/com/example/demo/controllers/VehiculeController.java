@@ -3,6 +3,7 @@ package com.example.demo.controllers;
 import com.example.demo.enums.Status;
 import com.example.demo.entities.Vehicule;
 import com.example.demo.services.vehicule.IVehiculeService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class VehiculeController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('ROLE_ USER')")
     public List<Vehicule> getAllVehicles() {
         return vehiculeService.getAllVehicules();
     }
@@ -39,6 +41,7 @@ public class VehiculeController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public Vehicule getVehicleById(@PathVariable Long id) {
         return vehiculeService.getVehiculeById(id);
     }

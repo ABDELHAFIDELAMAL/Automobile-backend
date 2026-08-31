@@ -6,6 +6,7 @@ import com.example.demo.entities.Mecanicien;
 import com.example.demo.enums.Status;
 import com.example.demo.enums.TypeIntervention;
 import com.example.demo.services.intervention.IInterventionService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class InterventionController  {
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('USER')")
     public List<Intervention> getAllInterventions() {
         return interventionService.getAllInterventions();
     }

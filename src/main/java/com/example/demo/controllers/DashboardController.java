@@ -2,6 +2,7 @@ package com.example.demo.controllers;
 
 import com.example.demo.dto.DashboardDto;
 import com.example.demo.services.dashboard.DashboardService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,7 @@ public class DashboardController {
     }
 
     @GetMapping("/stats")
+    @PreAuthorize("hasAuthority('USER')")
     public DashboardDto getAtelierStats() {
         return dashboardService.getAtelierStats();
     }
