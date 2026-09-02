@@ -28,7 +28,7 @@ public class JwtService {
                 .expiresAt(instant.plus(10, ChronoUnit.MINUTES))
                 .subject(email)
                 .issuer("https://mon-application.com")
-                .claim("Roles", String.valueOf(Role.USER))
+                .claim("roles", String.valueOf(Role.USER))
                 .build();
         JwtEncoderParameters jwtEncoderParameters = JwtEncoderParameters.from(
                 JwsHeader.with(MacAlgorithm.HS256).build(),
