@@ -6,6 +6,7 @@ import com.example.demo.response.ApiResponse;
 import com.example.demo.services.mecanicien.IMecanicienService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/mecaniciens")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin("*")
 public class MecanicienController {
 
     private final IMecanicienService mecanicienService;
@@ -23,6 +24,7 @@ public class MecanicienController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<ApiResponse> getAllMechanicals() {
         try {
             List<Mecanicien> data = mecanicienService.getAllMecaniciens();

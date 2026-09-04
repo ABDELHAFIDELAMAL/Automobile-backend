@@ -1,66 +1,50 @@
 package com.example.demo.auth;
 
-import com.example.demo.exceptions.EmailAlreadyExistsException;
 import com.example.demo.request.LoginRequest;
 import com.example.demo.request.RegisterRequest;
+import com.example.demo.exceptions.EmailAlreadyExistsException;
 import com.example.demo.response.ApiResponse;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-@CrossOrigin("*")
+@RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
 
-    public AuthController(AuthService authService) {
-        this.authService = authService;
-    }
-
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<ApiResponse> register(@Valid @RequestBody RegisterRequest request) {
         try {
-            Object data = authService.register(request) ;
-            return ResponseEntity.ok(new ApiResponse(
-                    "Utilisateur enregistré avec succès !",
-                     data ,
-                    true
-            ));
+            Map<String, String> data = authService.register(request);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new ApiResponse("Utilisateur enregistre avec succes", data, true));
         } catch (EmailAlreadyExistsException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ApiResponse("Email Already Exist" , null , false));
+                    .body(new ApiResponse(e.getMessage(), null, false));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse("Une erreur interne est survenue." , null , false));
+                    .body(new ApiResponse("Echec de l'enregistrement", null, false));
         }
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<ApiResponse> login(@Valid @RequestBody LoginRequest request) {
         try {
-            Object data = authService.login(request);
-            return ResponseEntity.ok(new ApiResponse("Login success", data, true));
-        } catch (Exception e) {
+            Map<String, String> data = authService.login(request);
+            return ResponseEntity.ok(new ApiResponse("Connexion reussie", data, true));
+        } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ApiResponse("Login failed", null, false));
+                    .body(new ApiResponse("Identifiants incorrects", null, false));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse("Echec de la connexion", null, false));
         }
     }
-
-
-    @GetMapping("/profile")
-    public Authentication authentication(Authentication authentication){
-        try{
-            return (Authentication) ResponseEntity.ok(new ApiResponse("Authentication success", authentication, true));
-        }catch (AuthenticationException e) {
-            return (Authentication) ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ApiResponse("Invalid email or password", null, false));
-        }
-    }
-
 }

@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/vehicules")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin("*")
 public class VehiculeController {
 
     private final IVehiculeService vehiculeService;
@@ -23,7 +23,7 @@ public class VehiculeController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<ApiResponse> getAllVehicles() {
         try {
             List<Vehicule> data = vehiculeService.getAllVehicules();
@@ -35,6 +35,7 @@ public class VehiculeController {
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse> createVehicule(@RequestBody Vehicule vehicule) {
         try {
             Vehicule data = vehiculeService.createVehicule(vehicule);
@@ -47,6 +48,7 @@ public class VehiculeController {
     }
 
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse> deleteVehicle(@PathVariable Long id) {
         try {
             vehiculeService.deleteVehicule(id);
@@ -58,6 +60,7 @@ public class VehiculeController {
     }
 
     @PutMapping("/update/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse> updateVehicule(@PathVariable Long id, @RequestBody Vehicule vehicule) {
         try {
             Vehicule data = vehiculeService.updateVehicule(id, vehicule);
@@ -69,7 +72,7 @@ public class VehiculeController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<ApiResponse> getVehicleById(@PathVariable Long id) {
         try {
             Vehicule data = vehiculeService.getVehiculeById(id);
@@ -81,6 +84,7 @@ public class VehiculeController {
     }
 
     @GetMapping("/by/matricule")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ApiResponse> getVehiculeByMatricule(@RequestParam String matricule) {
         try {
             Vehicule data = vehiculeService.getVehiculeByMatricule(matricule);
@@ -92,6 +96,7 @@ public class VehiculeController {
     }
 
     @PatchMapping("/restituer/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ApiResponse> restituerVehicule(@PathVariable Long id,
                                                          @RequestParam String username, @RequestParam String userRole) {
         try {
@@ -104,6 +109,7 @@ public class VehiculeController {
     }
 
     @PatchMapping("/{idVehicle}/affecter/mecanicien/{idMechanic}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> affecterMecanicien(@PathVariable Long idVehicle, @PathVariable Long idMechanic) {
         try {
             Vehicule data = vehiculeService.afecterMecanicien(idVehicle, idMechanic);

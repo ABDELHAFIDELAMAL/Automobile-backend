@@ -7,13 +7,12 @@ import com.example.demo.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/api/v1/users")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin("*")
 public class UtilisateurController {
     private final IUserService userService;
 
@@ -120,8 +119,8 @@ public class UtilisateurController {
     }
 
     @PatchMapping("/change/{id}")
-    public ResponseEntity<ApiResponse> changerMotdePass(@PathVariable Long id,
-                                                        @RequestParam String ancienMdps, @RequestParam String nouveauMdps) {
+    public ResponseEntity<ApiResponse> changerMotePass(@PathVariable Long id,
+                                                       @RequestParam String ancienMdps, @RequestParam String nouveauMdps) {
         try {
             Utilisateur data = userService.changerMotdePass(id, ancienMdps, nouveauMdps);
             return ResponseEntity.ok(new ApiResponse("Password changed successfully", data, true));

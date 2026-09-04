@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/v1/interventions")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin("*")
 public class InterventionController {
     private final IInterventionService interventionService;
 
@@ -24,7 +24,7 @@ public class InterventionController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('USER')")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<ApiResponse> getAllInterventions() {
         try {
             List<Intervention> data = interventionService.getAllInterventions();

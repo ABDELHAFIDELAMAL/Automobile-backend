@@ -13,7 +13,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
@@ -23,7 +22,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Utilisateur implements UserDetails {
+public class Utilisateur {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,37 +44,28 @@ public class Utilisateur implements UserDetails {
     @JsonIgnore
     private String password;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {
+            CascadeType.MERGE,
+            CascadeType.PERSIST,
+            CascadeType.DETACH,
+            CascadeType.REFRESH
+    })
+    @JoinTable(
             name = "utilisateur_roles",
-            joinColumns = @JoinColumn(name = "utilisateur_id")
+            joinColumns = @JoinColumn(name = "utilisateur_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role")
-    private Set<Role> roles = new HashSet<>();
+    private Collection<AppRole> roles = new HashSet<>();
 
     @Builder.Default
     private boolean enabled = true;
 
     public void ajouterRole(Role role) {
-        this.roles.add(role);
+        AppRole appRole = new AppRole();
+        appRole.setRole(role);
+        this.roles.add(appRole);
     }
 
 
-    @Override
-    public String getUsername() {
-        return this.email;
-    }
-
-    @Override
-    public String getPassword() {
-        return this.password;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles.stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
-                .collect(Collectors.toList());
-    }
 }

@@ -4,6 +4,8 @@ import com.example.demo.enums.Role;
 import com.example.demo.entities.users.Utilisateur;
 import com.example.demo.repositories.users.UtilisateurRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -12,8 +14,7 @@ import java.util.Optional;
 
 @Service
 @Transactional
-public class UserService implements IUserService {
-
+public class UserService implements IUserService{
 
     private final UtilisateurRepository userRepository;
 
@@ -129,12 +130,19 @@ public class UserService implements IUserService {
                         new RuntimeException("Utilisateur nExiste pas avec id = " + id));
 
         user.ajouterRole(role);
-
         userRepository.save(user);
     }
 
     @Override
     public Optional<Utilisateur> findByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public Utilisateur getAuthenticatedUtilisateur() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Utilisateur connecté introuvable avec l'email: " + email));
     }
 }
