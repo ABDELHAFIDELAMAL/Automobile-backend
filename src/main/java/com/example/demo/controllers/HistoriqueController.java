@@ -1,8 +1,10 @@
 package com.example.demo.controllers;
 
 import com.example.demo.entities.HistoriqueIntervention;
-import com.example.demo.services.historique.HistoriqueService;
+import com.example.demo.response.ApiResponse;
 import com.example.demo.services.historique.IHistoriqueService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,7 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/api/v1/historiques")
 @CrossOrigin(origins = "http://localhost:4200")
-public class HistoriqueController  {
+public class HistoriqueController {
     private final IHistoriqueService historiqueService;
 
     public HistoriqueController(IHistoriqueService historiqueService) {
@@ -18,17 +20,23 @@ public class HistoriqueController  {
     }
 
     @GetMapping
-    public List<HistoriqueIntervention> getAllHistoriques() {
-        return historiqueService.getAllHistoriques();
+    public ResponseEntity<ApiResponse> getAllHistoriques() {
+        List<HistoriqueIntervention> data = historiqueService.getAllHistoriques();
+        ApiResponse response = new ApiResponse("Historiques fetched successfully", data, true);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping(path = "/by/intervention/{interventionId}")
-    public List<HistoriqueIntervention> getHistoriqueByInterventionId(@PathVariable Long interventionId) {
-        return historiqueService.getHistoriqueByInterventionId(interventionId);
+    public ResponseEntity<ApiResponse> getHistoriqueByInterventionId(@PathVariable Long interventionId) {
+        List<HistoriqueIntervention> data = historiqueService.getHistoriqueByInterventionId(interventionId);
+        ApiResponse response = new ApiResponse("Historiques for intervention fetched successfully", data, true);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping(path = "/create")
-    public HistoriqueIntervention createHistorique(@RequestBody HistoriqueIntervention historiqueIntervention) {
-        return historiqueService.createHistorique(historiqueIntervention);
+    public ResponseEntity<ApiResponse> createHistorique(@RequestBody HistoriqueIntervention historiqueIntervention) {
+        HistoriqueIntervention data = historiqueService.createHistorique(historiqueIntervention);
+        ApiResponse response = new ApiResponse("Historique created successfully", data, true);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }

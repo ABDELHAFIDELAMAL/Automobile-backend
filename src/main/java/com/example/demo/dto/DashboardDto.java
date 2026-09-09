@@ -11,21 +11,21 @@ import java.util.Map;
 @Data
 public class DashboardDto {
 
-    private long reçuesAujourdhui;
+    private long recuesAujourdhui;
     private long enDiagnostic;
-    private long enRéparation;
-    private long terminées;
-    private Map<Long, Long> chargeParMécanicien;
+    private long enReparation;
+    private long terminees;
+    private Map<Long, Long> chargeParMecanicien;
     private List<Intervention> retardsRestitution;
 
 
-    public DashboardDto(long reçuesAujourdhui, long enDiagnostic, long enRéparation, long terminées,
-                             Map<Long, Long> chargeParMécanicien, List<Intervention> retardsRestitution) {
-        this.reçuesAujourdhui = reçuesAujourdhui;
+    public DashboardDto(long recuesAujourdhui, long enDiagnostic, long enReparation, long terminees,
+                             Map<Long, Long> chargeParMecanicien, List<Intervention> retardsRestitution) {
+        this.recuesAujourdhui = recuesAujourdhui;
         this.enDiagnostic = enDiagnostic;
-        this.enRéparation = enRéparation;
-        this.terminées = terminées;
-        this.chargeParMécanicien = chargeParMécanicien;
+        this.enReparation = enReparation;
+        this.terminees = terminees;
+        this.chargeParMecanicien = chargeParMecanicien;
         this.retardsRestitution = retardsRestitution;
     }
 

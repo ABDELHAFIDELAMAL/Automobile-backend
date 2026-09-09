@@ -27,13 +27,13 @@ public class DashboardService {
         LocalDateTime finAujourdhui = LocalDate.now().atTime(23, 59, 59);
         LocalDateTime maintenant = LocalDateTime.now();
 
-        long reçuesAujourdhui = interventionRepository.countByDateDepotBetween(debutAujourdhui, finAujourdhui);
+        long recuesAujourdhui = interventionRepository.countByDateDepotBetween(debutAujourdhui, finAujourdhui);
 
         long enDiagnostic = interventionRepository.countByStatus(Status.DIAGNOSTIC_EN_COURS);
 
-        long enRéparation = interventionRepository.countByStatus(Status.EN_REPARATION);
+        long enReparation = interventionRepository.countByStatus(Status.EN_REPARATION);
 
-        long terminées = interventionRepository.countByStatus(Status.TERMINEE);
+        long terminees = interventionRepository.countByStatus(Status.TERMINEE);
 
         List<Intervention> enCours = interventionRepository.findByStatus(Status.EN_REPARATION);
         Map<Long, Long> chargeParMecanicien = enCours.stream()
@@ -42,7 +42,7 @@ public class DashboardService {
 
         List<Intervention> retards = interventionRepository.findRetards(maintenant, List.of(Status.RESTITUEE, Status.ANNULEE));
 
-        return new DashboardDto(reçuesAujourdhui, enDiagnostic, enRéparation, terminées, chargeParMecanicien, retards);
+        return new DashboardDto(recuesAujourdhui, enDiagnostic, enReparation, terminees, chargeParMecanicien, retards);
     }
 }
 

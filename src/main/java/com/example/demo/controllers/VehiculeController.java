@@ -2,7 +2,10 @@ package com.example.demo.controllers;
 
 import com.example.demo.entities.Status;
 import com.example.demo.entities.Vehicule;
+import com.example.demo.response.ApiResponse;
 import com.example.demo.services.vehicule.IVehiculeService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,53 +22,73 @@ public class VehiculeController {
     }
 
     @GetMapping
-    public List<Vehicule> getAllVehicles() {
-        return vehiculeService.getAllVehicules();
+    public ResponseEntity<ApiResponse> getAllVehicles() {
+        List<Vehicule> data = vehiculeService.getAllVehicules();
+        ApiResponse response = new ApiResponse("Vehicles fetched successfully", data, true);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/create")
-    public Vehicule createVehicule(@RequestBody Vehicule vehicule) {
-        return vehiculeService.createVehicule(vehicule);
+    public ResponseEntity<ApiResponse> createVehicule(@RequestBody Vehicule vehicule) {
+        Vehicule data = vehiculeService.createVehicule(vehicule);
+        ApiResponse response = new ApiResponse("Vehicle created successfully", data, true);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/delete/{id}")
-    public void deleteVehicle(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse> deleteVehicle(@PathVariable Long id) {
         vehiculeService.deleteVehicule(id);
+        ApiResponse response = new ApiResponse("Vehicle deleted successfully", null, true);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PutMapping("/update/{id}")
-    public Vehicule updateVehicule(@PathVariable Long id, @RequestBody Vehicule vehicule) {
-        return vehiculeService.updateVehicule(id, vehicule);
+    public ResponseEntity<ApiResponse> updateVehicule(@PathVariable Long id, @RequestBody Vehicule vehicule) {
+        Vehicule data = vehiculeService.updateVehicule(id, vehicule);
+        ApiResponse response = new ApiResponse("Vehicle updated successfully", data, true);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public Vehicule getVehicleById(@PathVariable Long id) {
-        return vehiculeService.getVehiculeById(id);
+    public ResponseEntity<ApiResponse> getVehicleById(@PathVariable Long id) {
+        Vehicule data = vehiculeService.getVehiculeById(id);
+        ApiResponse response = new ApiResponse("Vehicle details fetched successfully", data, true);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/by/matricule")
-    public Vehicule getVehiculeByMatricule(@RequestParam String matricule) {
-        return vehiculeService.getVehiculeByMatricule(matricule);
+    public ResponseEntity<ApiResponse> getVehiculeByMatricule(@RequestParam String matricule) {
+        Vehicule data = vehiculeService.getVehiculeByMatricule(matricule);
+        ApiResponse response = new ApiResponse("Vehicle fetched by registration number", data, true);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PatchMapping("/restituer/{id}")
-    public Vehicule restituerVehicule(@PathVariable Long id,
-            @RequestParam String username, @RequestParam String userRole) {
-        return vehiculeService.restituerVehicule(id, username, userRole);
+    public ResponseEntity<ApiResponse> restituerVehicule(@PathVariable Long id,
+                                                         @RequestParam String username, @RequestParam String userRole) {
+        Vehicule data = vehiculeService.restituerVehicule(id, username, userRole);
+        ApiResponse response = new ApiResponse("Vehicle returned successfully", data, true);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PatchMapping("/{idVehicle}/affecter/mecanicien/{idMechanic}")
-    public Vehicule affecterMecanicien(@PathVariable Long idVehicle, @PathVariable Long idMechanic) {
-        return vehiculeService.afecterMecanicien(idVehicle, idMechanic);
+    public ResponseEntity<ApiResponse> affecterMecanicien(@PathVariable Long idVehicle, @PathVariable Long idMechanic) {
+        Vehicule data = vehiculeService.afecterMecanicien(idVehicle, idMechanic);
+        ApiResponse response = new ApiResponse("Mechanic assigned to vehicle successfully", data, true);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/by/status")
-    public List<Vehicule> getVehicleByStatus(@RequestParam Status status) {
-        return vehiculeService.getVehiculeByStatus(status);
+    public ResponseEntity<ApiResponse> getVehicleByStatus(@RequestParam Status status) {
+        List<Vehicule> data = vehiculeService.getVehiculeByStatus(status);
+        ApiResponse response = new ApiResponse("Vehicles fetched by status", data, true);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/recherche")
-    public List<Vehicule> recherche(@RequestParam String text) {
-        return vehiculeService.rechercher(text);
+    public ResponseEntity<ApiResponse> recherche(@RequestParam String text) {
+        List<Vehicule> data = vehiculeService.rechercher(text);
+        ApiResponse response = new ApiResponse("Search results fetched successfully", data, true);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

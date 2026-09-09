@@ -2,7 +2,10 @@ package com.example.demo.controllers;
 
 import com.example.demo.entities.Intervention;
 import com.example.demo.entities.Mecanicien;
+import com.example.demo.response.ApiResponse;
 import com.example.demo.services.mecanicien.IMecanicienService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,53 +23,72 @@ public class MecanicienController {
     }
 
     @GetMapping
-    public List<Mecanicien> getAllMechanicals() {
-        return mecanicienService.getAllMecaniciens();
+    public ResponseEntity<ApiResponse> getAllMechanicals() {
+        List<Mecanicien> data = mecanicienService.getAllMecaniciens();
+        ApiResponse response = new ApiResponse("Mechanics fetched successfully", data, true);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/disponibles")
-    public List<Mecanicien> getMechanicalsDisponibles(@RequestParam boolean disponible) {
-        return mecanicienService.getMecaniciensDisponibles(disponible);
+    public ResponseEntity<ApiResponse> getMechanicalsDisponibles(@RequestParam boolean disponible) {
+        List<Mecanicien> data = mecanicienService.getMecaniciensDisponibles(disponible);
+        ApiResponse response = new ApiResponse("Available mechanics fetched successfully", data, true);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public Mecanicien getMecanicienById(
-            @PathVariable Long id) {
-        return mecanicienService.getMecanicienById(id);
+    public ResponseEntity<ApiResponse> getMecanicienById(@PathVariable Long id) {
+        Mecanicien data = mecanicienService.getMecanicienById(id);
+        ApiResponse response = new ApiResponse("Mechanic details fetched successfully", data, true);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/create")
-    public Mecanicien createMecanicien(@RequestBody Mecanicien mecanicien) {
-        return mecanicienService.createMecanicien(mecanicien);
+    public ResponseEntity<ApiResponse> createMecanicien(@RequestBody Mecanicien mecanicien) {
+        Mecanicien data = mecanicienService.createMecanicien(mecanicien);
+        ApiResponse response = new ApiResponse("Mechanic created successfully", data, true);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public Mecanicien updateMecanicien(@PathVariable Long id, @RequestBody Mecanicien mecanicien) {
-        return mecanicienService.updateMecanicien(id, mecanicien);
+    public ResponseEntity<ApiResponse> updateMecanicien(@PathVariable Long id, @RequestBody Mecanicien mecanicien) {
+        Mecanicien data = mecanicienService.updateMecanicien(id, mecanicien);
+        ApiResponse response = new ApiResponse("Mechanic updated successfully", data, true);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
-    public void deleteMecanicien(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse> deleteMecanicien(@PathVariable Long id) {
         mecanicienService.deleteMecanicien(id);
+        ApiResponse response = new ApiResponse("Mechanic deleted successfully", null, true);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PatchMapping("/activer/{id}")
-    public Mecanicien activer(@PathVariable Long id) {
-        return mecanicienService.activer(id);
+    public ResponseEntity<ApiResponse> activer(@PathVariable Long id) {
+        Mecanicien data = mecanicienService.activer(id);
+        ApiResponse response = new ApiResponse("Mechanic activated successfully", data, true);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PatchMapping("/desactiver/{id}")
-    public Mecanicien desactiver(@PathVariable Long id) {
-        return mecanicienService.desactiver(id);
+    public ResponseEntity<ApiResponse> desactiver(@PathVariable Long id) {
+        Mecanicien data = mecanicienService.desactiver(id);
+        ApiResponse response = new ApiResponse("Mechanic deactivated successfully", data, true);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/{id}/interventions")
-    public List<Intervention> getInterventions(@PathVariable Long id) {
-        return mecanicienService.getInterventions(id);
+    public ResponseEntity<ApiResponse> getInterventions(@PathVariable Long id) {
+        List<Intervention> data = mecanicienService.getInterventions(id);
+        ApiResponse response = new ApiResponse("Interventions for mechanic fetched successfully", data, true);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/charge")
-    public Map<Long, Integer> getCharge() {
-        return mecanicienService.getCharge();
+    public ResponseEntity<ApiResponse> getCharge() {
+        Map<Long, Integer> data = mecanicienService.getCharge();
+        ApiResponse response = new ApiResponse("Mechanics load workload fetched successfully", data, true);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

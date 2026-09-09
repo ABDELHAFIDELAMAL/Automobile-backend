@@ -100,14 +100,6 @@ public class AutomobileApplication {
 
             historiqueService.createHistorique(hist);
 
-
-
-
-
-
-
-
-
             Utilisateur conseiller = new Utilisateur();
             conseiller.ajouterRole(Role.CONSEILLER);
             conseiller.setNom("BENNANI");
@@ -208,20 +200,6 @@ public class AutomobileApplication {
             histNouvelle.setAncienStatus(null);
             histNouvelle.setNouveauStatus(Status.RECUE);
             historiqueService.createHistorique(histNouvelle);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
