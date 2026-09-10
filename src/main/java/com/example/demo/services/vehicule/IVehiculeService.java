@@ -1,7 +1,8 @@
 package com.example.demo.services.vehicule;
 
-import com.example.demo.entities.Status;
 import com.example.demo.entities.Vehicule;
+import com.example.demo.enums.Status;
+
 import java.util.List;
 
 public interface IVehiculeService {

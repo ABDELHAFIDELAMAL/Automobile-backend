@@ -1,7 +1,7 @@
 package com.example.demo.controllers.users;
 
-import com.example.demo.entities.users.Role;
 import com.example.demo.entities.users.Utilisateur;
+import com.example.demo.enums.Role;
 import com.example.demo.services.user.IUserService;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/api/v1/users")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 public class UtilisateurController {
     private final IUserService userService ;
 

@@ -1,7 +1,7 @@
 package com.example.demo.services.user;
 
-import com.example.demo.entities.users.Role;
 import com.example.demo.entities.users.Utilisateur;
+import com.example.demo.enums.Role;
 
 import java.util.List;
 import java.util.Optional;

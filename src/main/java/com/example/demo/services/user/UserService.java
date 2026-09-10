@@ -1,10 +1,9 @@
 package com.example.demo.services.user;
 
-import com.example.demo.entities.users.Role;
 import com.example.demo.entities.users.Utilisateur;
+import com.example.demo.enums.Role;
 import com.example.demo.repositories.users.UtilisateurRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
