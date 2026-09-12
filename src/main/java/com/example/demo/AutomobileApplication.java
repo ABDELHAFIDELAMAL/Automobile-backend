@@ -36,7 +36,7 @@ public class AutomobileApplication {
 
             Utilisateur utilisateur = new Utilisateur();
             utilisateur.ajouterRole(Role.ADMIN);
-            utilisateur.ajouterRole(Role.ADMIN);
+            utilisateur.ajouterRole(Role.CONSEILLER);
             utilisateur.setNom("EL AMAL");
             utilisateur.setPrenom("Abdelhafid");
             utilisateur.setPassword("k10888");

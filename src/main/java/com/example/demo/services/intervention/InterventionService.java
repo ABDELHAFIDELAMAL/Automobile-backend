@@ -41,12 +41,17 @@ public class InterventionService implements IInterventionService {
     }
 
     @Override
+    public Intervention getInterventionById(Long id) {
+        return interventionRepository.findById(id).orElseThrow(()->new RuntimeException("Intervention not found id " + id));
+    }
+
+    @Override
     public Intervention createIntervention(Intervention intervention) {
         return interventionRepository.save(intervention);
     }
 
     @Override
-    public Intervention updateIntervnetion(Long id, Intervention intervention) {
+    public Intervention updateIntervention(Long id, Intervention intervention) {
 
         Intervention interv = interventionRepository.findById(id)
                 .orElseThrow(() ->
@@ -315,4 +320,7 @@ public class InterventionService implements IInterventionService {
         return interventionRepository.findInterventionByType(type);
 
     }
+
+
+
 }

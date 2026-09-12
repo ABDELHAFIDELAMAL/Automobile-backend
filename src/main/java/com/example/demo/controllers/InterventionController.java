@@ -29,6 +29,13 @@ public class InterventionController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<ApiResponse> getInterventionById(@PathVariable Long id) {
+        Intervention data = interventionService.getInterventionById(id);
+        ApiResponse response = new ApiResponse("Interventions fetched successfully", data, true);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PostMapping(path = "/create")
     public ResponseEntity<ApiResponse> createIntervention(@RequestBody Intervention intervention) {
         Intervention data = interventionService.createIntervention(intervention);
@@ -38,7 +45,7 @@ public class InterventionController {
 
     @PutMapping(path = "/update/{id}")
     public ResponseEntity<ApiResponse> updateIntervnetion(@PathVariable Long id, @RequestBody Intervention intervention) {
-        Intervention data = interventionService.updateIntervnetion(id, intervention);
+        Intervention data = interventionService.updateIntervention(id, intervention);
         ApiResponse response = new ApiResponse("Intervention updated successfully", data, true);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

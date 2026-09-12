@@ -9,8 +9,9 @@ import java.util.List;
 
 public interface IInterventionService {
     List<Intervention> getAllInterventions();
+    Intervention getInterventionById(Long id);
     Intervention createIntervention(Intervention intervention);
-    Intervention updateIntervnetion(Long id , Intervention intervention);
+    Intervention updateIntervention(Long id , Intervention intervention);
     Intervention assignMecanicien(Long id , Mecanicien mecanicien);
     Intervention setCoutEstime(Long id , Double cout);
     Intervention addDiagnostic(Long id, String diagnostic);
@@ -22,4 +23,5 @@ public interface IInterventionService {
     List<Intervention> getEnRetard();
     Double calculerCoutTotal(Long id);
     List<Intervention> getInterventionsByType(TypeIntervention type);
+
 }

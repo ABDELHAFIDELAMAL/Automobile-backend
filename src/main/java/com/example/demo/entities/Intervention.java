@@ -4,6 +4,7 @@ import com.example.demo.enums.Priorite;
 import com.example.demo.enums.Status;
 import com.example.demo.enums.TypeIntervention;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -26,7 +27,7 @@ public class Intervention {
     private Long id;
 
     @ManyToOne
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY )
     @JoinColumn(name = "vehicule_id")
     private Vehicule vehicule;
 
