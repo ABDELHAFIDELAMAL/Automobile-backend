@@ -3,7 +3,7 @@ package com.example.demo.services.dashboard;
 
 import com.example.demo.dto.DashboardDto;
 import com.example.demo.entities.Intervention;
-import com.example.demo.entities.Status;
+import com.example.demo.enums.Status;
 import com.example.demo.repositories.InterventionRepository;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;

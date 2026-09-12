@@ -1,5 +1,6 @@
 package com.example.demo.entities;
 
+import com.example.demo.enums.Specialite;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;

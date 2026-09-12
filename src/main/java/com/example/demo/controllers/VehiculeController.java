@@ -1,7 +1,7 @@
 package com.example.demo.controllers;
 
-import com.example.demo.entities.Status;
 import com.example.demo.entities.Vehicule;
+import com.example.demo.enums.Status;
 import com.example.demo.response.ApiResponse;
 import com.example.demo.services.vehicule.IVehiculeService;
 import org.springframework.http.HttpStatus;
@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/vehicules")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 public class VehiculeController {
 
     private final IVehiculeService vehiculeService;

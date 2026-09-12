@@ -1,5 +1,6 @@
 package com.example.demo.entities.users;
 
+import com.example.demo.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;

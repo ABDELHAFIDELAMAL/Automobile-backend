@@ -1,5 +1,8 @@
 package com.example.demo.entities;
 
+import com.example.demo.enums.Priorite;
+import com.example.demo.enums.Status;
+import com.example.demo.enums.TypeIntervention;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

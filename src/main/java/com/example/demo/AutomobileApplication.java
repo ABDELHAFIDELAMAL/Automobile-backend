@@ -1,9 +1,8 @@
 package com.example.demo;
 
 import com.example.demo.entities.*;
-import com.example.demo.entities.users.Role;
 import com.example.demo.entities.users.Utilisateur;
-import com.example.demo.repositories.users.UtilisateurRepository;
+import com.example.demo.enums.*;
 import com.example.demo.services.historique.HistoriqueService;
 import com.example.demo.services.intervention.InterventionService;
 import com.example.demo.services.mecanicien.MecanicienService;
@@ -17,8 +16,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @SpringBootApplication
 public class AutomobileApplication {
