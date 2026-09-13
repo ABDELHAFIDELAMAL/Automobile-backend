@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface HistoriqueRepository extends JpaRepository<HistoriqueIntervention , Long> {
     List<HistoriqueIntervention> findByInterventionIdOrderByDateDesc(Long interventionId);
+
+    boolean existsByInterventionId(Long interventionId);
 }

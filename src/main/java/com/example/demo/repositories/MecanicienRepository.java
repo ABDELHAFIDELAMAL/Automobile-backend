@@ -10,4 +10,7 @@ import java.util.List;
 public interface MecanicienRepository
     extends JpaRepository<Mecanicien , Long> {
     List<Mecanicien> findMecanicienByDisponible(boolean disponible);
+
+    boolean existsByNom(String nom);
+
 }

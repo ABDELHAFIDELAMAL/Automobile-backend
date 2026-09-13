@@ -4,6 +4,7 @@ import com.example.demo.entities.Intervention;
 import com.example.demo.entities.Mecanicien;
 import com.example.demo.entities.Vehicule;
 import com.example.demo.enums.Status;
+import com.example.demo.exceptions.AllReadyExistException;
 import com.example.demo.repositories.MecanicienRepository;
 import com.example.demo.repositories.VehiculeRepository;
 import jakarta.transaction.Transactional;
@@ -27,7 +28,11 @@ public class VehiculeService implements IVehiculeService {
 
     @Override
     public Vehicule createVehicule(Vehicule vehicule) {
-        return vehiculeRepository.save(vehicule);
+        if(vehiculeRepository.existsByImmatriculation(vehicule.getImmatriculation())){
+            throw new AllReadyExistException("Vehicules deja exist de cette immatriculation :" + vehicule.getImmatriculation());
+        }else{
+            return vehiculeRepository.save(vehicule);
+        }
     }
 
     @Override

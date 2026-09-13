@@ -2,6 +2,7 @@ package com.example.demo.services.mecanicien;
 
 import com.example.demo.entities.Intervention;
 import com.example.demo.entities.Mecanicien;
+import com.example.demo.exceptions.AllReadyExistException;
 import com.example.demo.repositories.InterventionRepository;
 import com.example.demo.repositories.MecanicienRepository;
 import jakarta.transaction.Transactional;
@@ -44,7 +45,11 @@ public class MecanicienService implements IMecanicienService {
 
     @Override
     public Mecanicien createMecanicien(Mecanicien mecanicien) {
-        return mecanicienRepository.save(mecanicien);
+        if( mecanicienRepository.existsByNom(mecanicien.getNom())){
+            throw new AllReadyExistException("Mécanicien deja exist de nom : " + mecanicien.getNom());
+        }else{
+            return mecanicienRepository.save(mecanicien);
+        }
     }
 
     @Override

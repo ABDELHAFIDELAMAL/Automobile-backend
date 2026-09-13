@@ -30,4 +30,7 @@ public interface InterventionRepository
 
     @Query("SELECT i FROM Intervention i WHERE i.dateRestitutionPrevue < :maintenant AND i.status NOT IN :statusExclus")
     List<Intervention> findRetards(@Param("maintenant") LocalDateTime maintenant, @Param("statusExclus") List<Status> statusExclus);
+
+    boolean existsByVehiculeIdAndTypeAndDescription(Long vehiculeId, TypeIntervention type, String description);
+
 }

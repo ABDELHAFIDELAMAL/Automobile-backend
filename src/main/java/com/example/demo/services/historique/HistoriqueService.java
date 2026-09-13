@@ -1,6 +1,7 @@
 package com.example.demo.services.historique;
 
 import com.example.demo.entities.HistoriqueIntervention;
+import com.example.demo.exceptions.AllReadyExistException;
 import com.example.demo.repositories.HistoriqueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,9 +29,14 @@ public class HistoriqueService implements IHistoriqueService {
 
     @Override
     public HistoriqueIntervention createHistorique(HistoriqueIntervention historiqueIntervention) {
-        if (historiqueIntervention.getDate() == null) {
-            historiqueIntervention.setDate(LocalDateTime.now());
+
+        if (historiqueRepository.existsByInterventionId(historiqueIntervention.getIntervention().getId() )){
+            throw new AllReadyExistException("Historique de cette Intervention deja exist " );
+        }else{
+            if (historiqueIntervention.getDate() == null) {
+                historiqueIntervention.setDate(LocalDateTime.now());
+            }
+            return historiqueRepository.save(historiqueIntervention);
         }
-        return historiqueRepository.save(historiqueIntervention);
     }
 }

@@ -3,6 +3,7 @@ package com.example.demo.services.intervention;
 import com.example.demo.entities.*;
 import com.example.demo.enums.Status;
 import com.example.demo.enums.TypeIntervention;
+import com.example.demo.exceptions.AllReadyExistException;
 import com.example.demo.repositories.HistoriqueRepository;
 import com.example.demo.repositories.InterventionRepository;
 import com.example.demo.repositories.MecanicienRepository;
@@ -47,7 +48,14 @@ public class InterventionService implements IInterventionService {
 
     @Override
     public Intervention createIntervention(Intervention intervention) {
-        return interventionRepository.save(intervention);
+        boolean exist = interventionRepository.existsByVehiculeIdAndTypeAndDescription(intervention.getVehicule().getId(), intervention.getType(), intervention.getDescription());
+
+        if(exist){
+            throw new AllReadyExistException("Intervention already exists with id " + intervention.getId());
+        }else{
+            return interventionRepository.save(intervention);
+        }
+
     }
 
     @Override

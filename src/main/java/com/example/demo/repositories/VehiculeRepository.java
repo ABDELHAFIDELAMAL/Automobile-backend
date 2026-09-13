@@ -11,4 +11,5 @@ public interface VehiculeRepository
 
     Vehicule findByImmatriculation(String matricule);
 
+    boolean existsByImmatriculation(String matricule);
 }

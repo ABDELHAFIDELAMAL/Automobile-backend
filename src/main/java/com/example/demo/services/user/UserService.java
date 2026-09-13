@@ -2,6 +2,7 @@ package com.example.demo.services.user;
 
 import com.example.demo.entities.users.Utilisateur;
 import com.example.demo.enums.Role;
+import com.example.demo.exceptions.AllReadyExistException;
 import com.example.demo.repositories.users.UtilisateurRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -44,10 +45,14 @@ public class UserService implements IUserService {
 
     @Override
     public Utilisateur createUtilisateur(Utilisateur utilisateur) {
-        utilisateur.setPassword(
-                passwordEncoder.encode(utilisateur.getPassword())
-        );
-        return userRepository.save(utilisateur);
+        if(userRepository.existsByEmail(utilisateur.getEmail())){
+            throw new AllReadyExistException("Utilisateur deja exist de ce email : " + utilisateur.getEmail());
+        }else{
+            utilisateur.setPassword(
+                    passwordEncoder.encode(utilisateur.getPassword())
+            );
+            return userRepository.save(utilisateur);
+        }
     }
 
     @Override
