@@ -2,6 +2,7 @@ package com.example.demo.controllers;
 
 import com.example.demo.entities.Intervention;
 import com.example.demo.entities.Mecanicien;
+import com.example.demo.exceptions.AllReadyExistException;
 import com.example.demo.response.ApiResponse;
 import com.example.demo.services.mecanicien.IMecanicienService;
 import org.springframework.http.HttpStatus;
@@ -45,9 +46,13 @@ public class MecanicienController {
 
     @PostMapping("/create")
     public ResponseEntity<ApiResponse> createMecanicien(@RequestBody Mecanicien mecanicien) {
-        Mecanicien data = mecanicienService.createMecanicien(mecanicien);
-        ApiResponse response = new ApiResponse("Mechanic created successfully", data, true);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        try {
+            Mecanicien data = mecanicienService.createMecanicien(mecanicien);
+            ApiResponse response = new ApiResponse("Mechanic created successfully", data, true);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (AllReadyExistException e) {
+            throw new AllReadyExistException(e.getMessage());
+        }
     }
 
     @PutMapping("/update/{id}")

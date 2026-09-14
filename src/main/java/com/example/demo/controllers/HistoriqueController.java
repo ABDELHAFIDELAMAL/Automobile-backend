@@ -1,6 +1,7 @@
 package com.example.demo.controllers;
 
 import com.example.demo.entities.HistoriqueIntervention;
+import com.example.demo.exceptions.AllReadyExistException;
 import com.example.demo.response.ApiResponse;
 import com.example.demo.services.historique.IHistoriqueService;
 import org.springframework.http.HttpStatus;
@@ -35,8 +36,12 @@ public class HistoriqueController {
 
     @PostMapping(path = "/create")
     public ResponseEntity<ApiResponse> createHistorique(@RequestBody HistoriqueIntervention historiqueIntervention) {
-        HistoriqueIntervention data = historiqueService.createHistorique(historiqueIntervention);
-        ApiResponse response = new ApiResponse("Historique created successfully", data, true);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        try {
+            HistoriqueIntervention data = historiqueService.createHistorique(historiqueIntervention);
+            ApiResponse response = new ApiResponse("Historique created successfully", data, true);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (AllReadyExistException e) {
+            throw new AllReadyExistException(e.getMessage());
+        }
     }
 }

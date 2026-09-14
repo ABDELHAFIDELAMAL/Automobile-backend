@@ -1,6 +1,8 @@
 package com.example.demo.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
@@ -38,7 +40,8 @@ public class Vehicule {
     private Integer annee;
 
     @NotNull
-    @Positive(message = "Le kilométrage doit être positif")
+    @Min(value = 0, message = "Le kilométrage ne peut pas être inférieur à 0")
+    @Max(value = 99999999, message = "Le kilométrage maximal autorisé est de 99 999 999 km")
     @Column(nullable = false)
     private Integer kilometrage;
 

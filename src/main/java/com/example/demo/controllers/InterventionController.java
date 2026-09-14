@@ -4,6 +4,7 @@ import com.example.demo.entities.Intervention;
 import com.example.demo.entities.Mecanicien;
 import com.example.demo.enums.Status;
 import com.example.demo.enums.TypeIntervention;
+import com.example.demo.exceptions.AllReadyExistException;
 import com.example.demo.response.ApiResponse;
 import com.example.demo.services.intervention.IInterventionService;
 import org.springframework.http.HttpStatus;
@@ -38,16 +39,24 @@ public class InterventionController {
 
     @PostMapping(path = "/create")
     public ResponseEntity<ApiResponse> createIntervention(@RequestBody Intervention intervention) {
-        Intervention data = interventionService.createIntervention(intervention);
-        ApiResponse response = new ApiResponse("Intervention created successfully", data, true);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        try {
+            Intervention data = interventionService.createIntervention(intervention);
+            ApiResponse response = new ApiResponse("Intervention created successfully", data, true);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (AllReadyExistException e) {
+            throw new AllReadyExistException(e.getMessage());
+        }
     }
 
     @PutMapping(path = "/update/{id}")
-    public ResponseEntity<ApiResponse> updateIntervnetion(@PathVariable Long id, @RequestBody Intervention intervention) {
-        Intervention data = interventionService.updateIntervention(id, intervention);
-        ApiResponse response = new ApiResponse("Intervention updated successfully", data, true);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public ResponseEntity<ApiResponse> updateIntervention(@PathVariable Long id, @RequestBody Intervention intervention) {
+        try {
+            Intervention data = interventionService.updateIntervention(id, intervention);
+            ApiResponse response = new ApiResponse("Intervention updated successfully", data, true);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (AllReadyExistException e) {
+            throw new AllReadyExistException(e.getMessage());
+        }
     }
 
     @PatchMapping(path = "assign/{id}")

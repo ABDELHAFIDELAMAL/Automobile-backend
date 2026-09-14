@@ -2,6 +2,8 @@ package com.example.demo.controllers;
 
 import com.example.demo.entities.Vehicule;
 import com.example.demo.enums.Status;
+import com.example.demo.exceptions.AllReadyExistException;
+import com.example.demo.exceptions.NotFoundException;
 import com.example.demo.response.ApiResponse;
 import com.example.demo.services.vehicule.IVehiculeService;
 import org.springframework.http.HttpStatus;
@@ -30,16 +32,26 @@ public class VehiculeController {
 
     @PostMapping("/create")
     public ResponseEntity<ApiResponse> createVehicule(@RequestBody Vehicule vehicule) {
-        Vehicule data = vehiculeService.createVehicule(vehicule);
-        ApiResponse response = new ApiResponse("Vehicle created successfully", data, true);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        try {
+            Vehicule data = vehiculeService.createVehicule(vehicule);
+            ApiResponse response = new ApiResponse("Vehicle created successfully", data, true);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (AllReadyExistException e) {
+            ApiResponse response = new ApiResponse(e.getMessage(), null, false);
+            return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+        }
     }
+
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ApiResponse> deleteVehicle(@PathVariable Long id) {
-        vehiculeService.deleteVehicule(id);
-        ApiResponse response = new ApiResponse("Vehicle deleted successfully", null, true);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        try {
+            vehiculeService.deleteVehicule(id);
+            ApiResponse response = new ApiResponse("Vehicle deleted successfully", null, true);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            throw new NotFoundException(e.getMessage());
+        }
     }
 
     @PutMapping("/update/{id}")
