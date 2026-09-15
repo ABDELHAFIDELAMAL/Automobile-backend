@@ -67,7 +67,7 @@ public class InterventionController {
     }
 
     @PostMapping(path = "/setcout/{id}")
-    public ResponseEntity<ApiResponse> setCoutEstime(@PathVariable Long id, @RequestParam Double cout) {
+    public ResponseEntity<ApiResponse> setCoutEstime(@PathVariable Long id,  @RequestParam("coutEstime") Double cout) {
         Intervention data = interventionService.setCoutEstime(id, cout);
         ApiResponse response = new ApiResponse("Estimated cost updated successfully", data, true);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -81,8 +81,8 @@ public class InterventionController {
     }
 
     @PatchMapping(path = "/change/status/{id}")
-    public ResponseEntity<ApiResponse> changerStatus(@PathVariable Long id, @RequestBody Status statusIntervention) {
-        Intervention data = interventionService.changerStatus(id, statusIntervention);
+    public ResponseEntity<ApiResponse> changerStatus(@PathVariable Long id, @RequestBody Status statusIntervention , @RequestParam String auteur) {
+        Intervention data = interventionService.changerStatus(id, statusIntervention , auteur);
         ApiResponse response = new ApiResponse("Status updated successfully", data, true);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

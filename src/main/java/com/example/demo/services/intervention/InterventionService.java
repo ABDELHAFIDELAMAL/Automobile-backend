@@ -9,11 +9,15 @@ import com.example.demo.repositories.InterventionRepository;
 import com.example.demo.repositories.MecanicienRepository;
 import com.example.demo.repositories.VehiculeRepository;
 import jakarta.transaction.Transactional;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
+
+import static com.example.demo.enums.Status.*;
 
 @Service
 @Transactional
@@ -99,7 +103,7 @@ public class InterventionService implements IInterventionService {
         intervention.setMecanicien(mecanicien1);
 
         if (intervention.getStatus() == Status.DEVIS_A_VALIDER) {
-            intervention.setStatus(Status.EN_REPARATION);
+            intervention.setStatus(EN_REPARATION);
         }
 
         mecanicien1.setDisponible(false);
@@ -122,7 +126,7 @@ public class InterventionService implements IInterventionService {
 
         intervention.setCoutEstime(cout);
 
-        if (intervention.getStatus() == Status.DIAGNOSTIC_EN_COURS) {
+        if (intervention.getStatus() == DIAGNOSTIC_EN_COURS) {
             intervention.setStatus(Status.DEVIS_A_VALIDER);
         }
 
@@ -136,13 +140,13 @@ public class InterventionService implements IInterventionService {
                 .orElseThrow(() ->
                         new RuntimeException("Intervention not found with id : " + id));
 
-        if (intervention.getStatus() != Status.RECUE) {
+        if (intervention.getStatus() != RECUE) {
             throw new IllegalStateException(
                     "Impossible d'ajouter un diagnostic");
         }
 
         Status ancienStatus = intervention.getStatus();
-        Status nouveauStatus = Status.DIAGNOSTIC_EN_COURS;
+        Status nouveauStatus = DIAGNOSTIC_EN_COURS;
 
         intervention.setDiagnostic(diagnostic);
         intervention.setStatus(nouveauStatus);
@@ -166,38 +170,37 @@ public class InterventionService implements IInterventionService {
     }
 
     @Override
-    public Intervention changerStatus(Long id, Status nouveauStatus) {
-
+    public Intervention changerStatus(Long id, Status nouveauStatus, String auteur ) {
         Intervention intervention = interventionRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Intervention not found with id : " + id));
+                .orElseThrow(() -> new RuntimeException("Intervention introuvable"));
 
-        if (intervention.getStatus() == nouveauStatus) {
-            throw new IllegalArgumentException(
-                    "Le statut est déjà " + nouveauStatus);
+        Status statusActual = intervention.getStatus() ;
+
+        boolean valide = switch (statusActual) {
+            case RECUE -> nouveauStatus == DIAGNOSTIC_EN_COURS;
+            case DIAGNOSTIC_EN_COURS -> nouveauStatus == Status.DEVIS_A_VALIDER;
+            case DEVIS_A_VALIDER -> nouveauStatus == EN_REPARATION;
+            case EN_REPARATION -> nouveauStatus == Status.TERMINEE;
+            case TERMINEE -> nouveauStatus == Status.RESTITUEE;
+            case RESTITUEE -> false;
+            default -> false;
+        };
+
+        if (!valide) {
+            throw new IllegalStateException("Transition de " + statusActual + " vers " + nouveauStatus + " interdite.");
         }
-
-        Status ancienStatus = intervention.getStatus();
+        HistoriqueIntervention history = new HistoriqueIntervention();
+        history.setIntervention(intervention);
+        history.setAncienStatus(statusActual);
+        history.setNouveauStatus(nouveauStatus);
+        history.setDate(LocalDateTime.now());
+        history.setAuteur(auteur);
+        historiqueRepository.save(history);
 
         intervention.setStatus(nouveauStatus);
-
-        interventionRepository.save(intervention);
-
-        HistoriqueIntervention historique = new HistoriqueIntervention();
-        historique.setIntervention(intervention);
-        historique.setAncienStatus(ancienStatus);
-        historique.setNouveauStatus(nouveauStatus);
-        historique.setCommentaire("Changement du statut vers : " + nouveauStatus);
-        historique.setAuteur(
-                intervention.getMecanicien() != null
-                        ? intervention.getMecanicien().getNom()
-                        : "SYSTEM");
-        historique.setDate(LocalDateTime.now());
-
-        historiqueRepository.save(historique);
-
-        return intervention;
+        return interventionRepository.save(intervention);
     }
+
 
     @Override
     public Intervention terminer(Long id) {
@@ -206,7 +209,7 @@ public class InterventionService implements IInterventionService {
                 .orElseThrow(() ->
                         new RuntimeException("Intervention not found with id : " + id));
 
-        if (intervention.getStatus() != Status.EN_REPARATION) {
+        if (intervention.getStatus() != EN_REPARATION) {
             throw new IllegalStateException(
                     "L'intervention doit être EN_REPARATION");
         }

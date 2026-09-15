@@ -15,7 +15,7 @@ public interface IInterventionService {
     Intervention assignMecanicien(Long id , Mecanicien mecanicien);
     Intervention setCoutEstime(Long id , Double cout);
     Intervention addDiagnostic(Long id, String diagnostic);
-    Intervention changerStatus(Long id , Status statusIntervention);
+    Intervention changerStatus(Long id, Status nouveauStatus, String auteur);
     Intervention terminer(Long id);
     Intervention restituer(Long id);
     List<Intervention> getInterventionByMecanicien(Long idMecanicien);
