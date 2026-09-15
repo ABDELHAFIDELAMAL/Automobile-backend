@@ -8,15 +8,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "interventions")
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -27,7 +24,7 @@ public class Intervention {
     private Long id;
 
     @ManyToOne
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY )
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @JoinColumn(name = "vehicule_id")
     private Vehicule vehicule;
 

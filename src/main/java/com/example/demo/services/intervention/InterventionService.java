@@ -307,7 +307,7 @@ public class InterventionService implements IInterventionService {
     }
 
     @Override
-    public Double calculerCoutTotal(Long id) {
+    public Double calculerCoutTotal() {
 
         List<Intervention> interventions = interventionRepository.findAll();
 
@@ -326,7 +326,6 @@ public class InterventionService implements IInterventionService {
     @Override
     public List<Intervention> getInterventionsByType(TypeIntervention type) {
         return interventionRepository.findInterventionByType(type);
-
     }
 
 

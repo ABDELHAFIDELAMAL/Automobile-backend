@@ -122,17 +122,19 @@ public class InterventionController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping(path = "/calculer/cout/total/{id}")
-    public ResponseEntity<ApiResponse> calculerCoutTotal(@PathVariable Long id) {
-        Double data = interventionService.calculerCoutTotal(id);
+    @GetMapping(path = "/calculer/cout/total")
+    public ResponseEntity<ApiResponse> calculerCoutTotal() {
+        Double data = interventionService.calculerCoutTotal();
         ApiResponse response = new ApiResponse("Total cost calculated successfully", data, true);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping(path = "/by/type/{id}")
-    public ResponseEntity<ApiResponse> getInterventionsByType(@RequestBody TypeIntervention type) {
+    @GetMapping(path = "/by/type")
+    public ResponseEntity<ApiResponse> getInterventionsByType(@RequestParam("type") String typeStr) {
+        TypeIntervention type = TypeIntervention.valueOf(typeStr.toUpperCase());
         List<Intervention> data = interventionService.getInterventionsByType(type);
         ApiResponse response = new ApiResponse("Interventions fetched by type", data, true);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
 }

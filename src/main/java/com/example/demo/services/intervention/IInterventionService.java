@@ -21,7 +21,7 @@ public interface IInterventionService {
     List<Intervention> getInterventionByMecanicien(Long idMecanicien);
     List<Intervention> getInterventionByVehicule(Long idVehicule);
     List<Intervention> getEnRetard();
-    Double calculerCoutTotal(Long id);
+    Double calculerCoutTotal();
     List<Intervention> getInterventionsByType(TypeIntervention type);
 
 }

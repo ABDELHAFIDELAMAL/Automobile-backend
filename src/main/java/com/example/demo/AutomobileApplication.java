@@ -8,6 +8,7 @@ import com.example.demo.services.intervention.InterventionService;
 import com.example.demo.services.mecanicien.MecanicienService;
 import com.example.demo.services.user.UserService;
 import com.example.demo.services.vehicule.VehiculeService;
+import org.hibernate.validator.internal.constraintvalidators.hv.UUIDValidator;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @SpringBootApplication
 public class AutomobileApplication {
@@ -182,11 +184,12 @@ public class AutomobileApplication {
             intNouvelle.setStatus(Status.RECUE); // Statut initial d'arrivée
             intNouvelle.setPriorite(Priorite.BASSE);
             intNouvelle.setType(TypeIntervention.PNEUMATIQUES);
+            intNouvelle.setCoutEstime(4500.00);
             intNouvelle.setDescription("Changement de 2 pneus avant + Parallélisme");
             intNouvelle.setDateDepot(LocalDateTime.now()); // Reçue aujourd'hui
             intNouvelle.setDateRestitutionPrevue(LocalDateTime.now().plusHours(4));
             intNouvelle.setVehicule(vFictif);
-            // Pas de mécanicien ni de coût estimé encore (Conforme aux règles RG-AUTO-05/06)
+
             Intervention savedIntNouvelle = interventionService.createIntervention(intNouvelle);
 
             HistoriqueIntervention histNouvelle = new HistoriqueIntervention();
@@ -197,8 +200,6 @@ public class AutomobileApplication {
             histNouvelle.setAncienStatus(null);
             histNouvelle.setNouveauStatus(Status.RECUE);
             historiqueService.createHistorique(histNouvelle);
-
-
 
         };
     }
