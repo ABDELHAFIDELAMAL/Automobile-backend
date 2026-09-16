@@ -4,10 +4,13 @@ import com.example.demo.entities.HistoriqueIntervention;
 import com.example.demo.exceptions.AllReadyExistException;
 import com.example.demo.response.ApiResponse;
 import com.example.demo.services.historique.IHistoriqueService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -43,5 +46,18 @@ public class HistoriqueController {
         } catch (AllReadyExistException e) {
             throw new AllReadyExistException(e.getMessage());
         }
+    }
+
+
+
+    @GetMapping(path = "/by/date")
+    public ResponseEntity<ApiResponse> getHistoriquesByDate(
+            @RequestParam("date") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate dateSimple) {
+
+        LocalDateTime dateLocalDateTime = dateSimple.atStartOfDay();
+
+        List<HistoriqueIntervention> data = historiqueService.getHistoriquesByDate(dateLocalDateTime);
+        ApiResponse response = new ApiResponse("Success", data ,true);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

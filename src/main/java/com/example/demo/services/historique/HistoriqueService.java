@@ -5,7 +5,11 @@ import com.example.demo.exceptions.AllReadyExistException;
 import com.example.demo.repositories.HistoriqueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -38,5 +42,13 @@ public class HistoriqueService implements IHistoriqueService {
             }
             return historiqueRepository.save(historiqueIntervention);
         }
+    }
+
+    @Override
+    public List<HistoriqueIntervention> getHistoriquesByDate(LocalDateTime date) {
+        LocalDate jourPur = date.toLocalDate();
+        LocalDateTime debutDuJour = jourPur.atStartOfDay();
+        LocalDateTime finDuJour = jourPur.atTime(LocalTime.MAX);
+        return historiqueRepository.findByDateBetween(debutDuJour, finDuJour);
     }
 }
