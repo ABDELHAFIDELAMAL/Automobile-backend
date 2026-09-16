@@ -2,6 +2,7 @@ package com.example.demo.services.mecanicien;
 
 import com.example.demo.entities.Intervention;
 import com.example.demo.entities.Mecanicien;
+import com.example.demo.enums.Specialite;
 import com.example.demo.exceptions.AllReadyExistException;
 import com.example.demo.repositories.InterventionRepository;
 import com.example.demo.repositories.MecanicienRepository;
@@ -129,5 +130,10 @@ public class MecanicienService implements IMecanicienService {
         }
 
         return charges;
+    }
+
+    @Override
+    public List<Mecanicien> getMecaniciensBySpecialite(Specialite specialite) {
+        return mecanicienRepository.findMecanicienBySpecialite(specialite);
     }
 }

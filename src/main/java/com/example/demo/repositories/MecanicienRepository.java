@@ -1,6 +1,7 @@
 package com.example.demo.repositories;
 
 import com.example.demo.entities.Mecanicien;
+import com.example.demo.enums.Specialite;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,4 +14,5 @@ public interface MecanicienRepository
 
     boolean existsByNom(String nom);
 
+    List<Mecanicien> findMecanicienBySpecialite(Specialite specialite);
 }

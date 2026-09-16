@@ -2,6 +2,7 @@ package com.example.demo.controllers;
 
 import com.example.demo.entities.Intervention;
 import com.example.demo.entities.Mecanicien;
+import com.example.demo.enums.Specialite;
 import com.example.demo.exceptions.AllReadyExistException;
 import com.example.demo.response.ApiResponse;
 import com.example.demo.services.mecanicien.IMecanicienService;
@@ -96,4 +97,19 @@ public class MecanicienController {
         ApiResponse response = new ApiResponse("Mechanics load workload fetched successfully", data, true);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+
+    @GetMapping(path = "/by/specialite")
+    public ResponseEntity<ApiResponse> getMecaniciensBySpecialite(@RequestParam("specialite") String specialiteStr) {
+        try {
+            Specialite specialite = Specialite.valueOf(specialiteStr.toUpperCase());
+            List<Mecanicien> data = mecanicienService.getMecaniciensBySpecialite(specialite);
+            ApiResponse response = new ApiResponse("Mécaniciens fetched successfully by speciality", data, true);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            ApiResponse errorResponse = new ApiResponse("Specialite invalide : " + specialiteStr, null, false);
+            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }
