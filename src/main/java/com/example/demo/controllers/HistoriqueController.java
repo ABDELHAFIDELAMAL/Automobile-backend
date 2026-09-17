@@ -55,9 +55,8 @@ public class HistoriqueController {
             @RequestParam("date") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate dateSimple) {
 
         LocalDateTime dateLocalDateTime = dateSimple.atStartOfDay();
-
         List<HistoriqueIntervention> data = historiqueService.getHistoriquesByDate(dateLocalDateTime);
-        ApiResponse response = new ApiResponse("Success", data ,true);
+        ApiResponse response = new ApiResponse("Historiques fetched successfully", data ,true);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

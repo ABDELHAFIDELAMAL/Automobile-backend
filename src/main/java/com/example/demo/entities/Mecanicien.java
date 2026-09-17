@@ -32,6 +32,7 @@ public class Mecanicien {
     @Column(nullable = false)
     private boolean disponible = true;
 
-    @OneToMany(mappedBy = "mecanicien", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "mecanicien", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Intervention> interventions;
+
 }

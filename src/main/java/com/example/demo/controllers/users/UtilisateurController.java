@@ -2,6 +2,7 @@ package com.example.demo.controllers.users;
 
 import com.example.demo.entities.users.Utilisateur;
 import com.example.demo.enums.Role;
+import com.example.demo.exceptions.AllReadyExistException;
 import com.example.demo.response.ApiResponse;
 import com.example.demo.services.user.IUserService;
 import org.springframework.http.HttpStatus;
@@ -43,9 +44,13 @@ public class UtilisateurController {
 
     @PostMapping(path = "/add")
     public ResponseEntity<ApiResponse> createUtilisateur(@RequestBody Utilisateur utilisateur) {
-        Utilisateur createdUser = userService.createUtilisateur(utilisateur);
-        ApiResponse response = new ApiResponse("Utilisateur créé avec succès", createdUser, true);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        try {
+            Utilisateur createdUser = userService.createUtilisateur(utilisateur);
+            ApiResponse response = new ApiResponse("Utilisateur créé avec succès", createdUser, true);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (AllReadyExistException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @PutMapping(path = "/update/{id}")
@@ -56,7 +61,7 @@ public class UtilisateurController {
     }
 
     @DeleteMapping(path = "/delete/{id}")
-    public ResponseEntity<ApiResponse> deleteUtilisatuer(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse> deleteUtilisateur(@PathVariable Long id) {
         userService.deleteUtilisatuer(id);
         ApiResponse response = new ApiResponse("Utilisateur supprimé avec succès", null, true);
         return ResponseEntity.ok(response);

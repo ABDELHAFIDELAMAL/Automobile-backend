@@ -36,7 +36,7 @@ public class MecanicienService implements IMecanicienService {
     public Mecanicien getMecanicienById(Long id) {
         return mecanicienRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException(
-                        "Mecanicien not found with id : " + id));
+                        "Mécanicien not found with id : " + id));
     }
 
     @Override
@@ -57,7 +57,7 @@ public class MecanicienService implements IMecanicienService {
     public Mecanicien updateMecanicien(Long id, Mecanicien mecanicien) {
         Mecanicien mecanicienExistant = mecanicienRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException(
-                        "Mecanicien not found with id : " + id));
+                        "Mécanicien not found with id : " + id));
 
         mecanicienExistant.setNom(mecanicien.getNom());
         mecanicienExistant.setDisponible(mecanicien.isDisponible());
@@ -70,7 +70,7 @@ public class MecanicienService implements IMecanicienService {
     public void deleteMecanicien(Long id) {
         Mecanicien mecanicien = mecanicienRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException(
-                        "Mecanicien not found with id : " + id));
+                        "Mécanicien not found with id : " + id));
 
         mecanicienRepository.delete(mecanicien);
     }
@@ -79,11 +79,11 @@ public class MecanicienService implements IMecanicienService {
     public Mecanicien activer(Long id) {
         Mecanicien mecanicien = mecanicienRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException(
-                        "Mecanicien n'existe pas avec l'id = " + id));
+                        "Mécanicien n'existe pas avec l'id = " + id));
 
         if (mecanicien.isDisponible()) {
             throw new IllegalStateException(
-                    "Mecanicien est déjà activé");
+                    "Mécanicien est déjà activé");
         }
 
         mecanicien.setDisponible(true);
@@ -95,11 +95,11 @@ public class MecanicienService implements IMecanicienService {
     public Mecanicien desactiver(Long id) {
         Mecanicien mecanicien = mecanicienRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException(
-                        "Mecanicien n'existe pas avec l'id = " + id));
+                        "Mécanicien n'existe pas avec l'id = " + id));
 
         if (!mecanicien.isDisponible()) {
             throw new IllegalStateException(
-                    "Mecanicien est déjà désactivé");
+                    "Mécanicien est déjà désactivé");
         }
 
         mecanicien.setDisponible(false);
@@ -111,7 +111,7 @@ public class MecanicienService implements IMecanicienService {
     public List<Intervention> getInterventions(Long id) {
         Mecanicien mecanicien = mecanicienRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException(
-                        "Mecanicien n'existe pas avec l'id = " + id));
+                        "Mécanicien n'existe pas avec l'id = " + id));
 
         return interventionRepository.findInterventionsByMecanicien(mecanicien);
     }
