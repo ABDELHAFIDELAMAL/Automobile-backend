@@ -179,9 +179,8 @@ public class AutomobileApplication {
             historiqueService.createHistorique(histRetard);
 
 
-            // --- CAS 2 : NOUVELLE INTERVENTION DU JOUR (Statut REÇUE) ---
             Intervention intNouvelle = new Intervention();
-            intNouvelle.setStatus(Status.RECUE); // Statut initial d'arrivée
+            intNouvelle.setStatus(Status.RECUE);
             intNouvelle.setPriorite(Priorite.BASSE);
             intNouvelle.setType(TypeIntervention.PNEUMATIQUES);
             intNouvelle.setCoutEstime(4500.00);

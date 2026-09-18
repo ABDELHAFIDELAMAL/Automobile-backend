@@ -186,6 +186,15 @@ public class InterventionService implements IInterventionService {
             default -> false;
         };
 
+        if ("TERMINEE".equals(intervention.getStatus())) {
+            mecanicienRepository.findById(intervention.getMecanicien().getId())
+                    .ifPresent(mecanicien -> {
+                        mecanicien.setDisponible(true);
+                        mecanicienRepository.save(mecanicien);
+                    });
+        }
+
+
         if (!valide) {
             throw new IllegalStateException("Transition de " + statusActual + " vers " + nouveauStatus + " interdite.");
         }
@@ -198,6 +207,8 @@ public class InterventionService implements IInterventionService {
         historiqueRepository.save(history);
 
         intervention.setStatus(nouveauStatus);
+
+
         return interventionRepository.save(intervention);
     }
 
