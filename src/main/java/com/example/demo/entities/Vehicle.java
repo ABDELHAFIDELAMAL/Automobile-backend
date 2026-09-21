@@ -4,20 +4,19 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.*;
 
 import java.util.List;
 
 @Entity
-@Table(name = "vehicules")
+@Table(name = "vehicles")
 @Getter
 @Setter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Vehicule {
+public class Vehicle {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,29 +24,29 @@ public class Vehicule {
 
     @NotNull
     @Column(nullable = false, unique = true)
-    private String immatriculation;
+    private String matricule;
 
     @NotNull
     @Column(nullable = false)
-    private String marque;
+    private String make;
 
     @NotNull
     @Column(nullable = false)
-    private String modele;
+    private String model;
 
     @NotNull
-    @Column(nullable = false)
-    private Integer annee;
+    @Column(nullable = false , name = "vehicle_year")
+    private Integer year;
 
     @NotNull
-    @Min(value = 0, message = "Le kilométrage ne peut pas être inférieur à 0")
-    @Max(value = 99999999, message = "Le kilométrage maximal autorisé est de 99 999 999 km")
+    @Min(value = 0, message = "Mileage cannot be less than 0")
+    @Max(value = 99999999, message = "Maximum allowed mileage is 99,999,999 km")
     @Column(nullable = false)
-    private Integer kilometrage;
+    private Integer mileage;
 
     @Column(nullable = false)
-    private boolean clientFictif = false;
+    private boolean dummyClient = false;
 
-    @OneToMany(mappedBy = "vehicule", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Intervention> interventions;
 }

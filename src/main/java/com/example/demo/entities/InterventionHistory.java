@@ -9,13 +9,13 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "historique_interventions")
+@Table(name = "intervention_histories")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class HistoriqueIntervention {
+public class InterventionHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,15 +26,15 @@ public class HistoriqueIntervention {
     private Intervention intervention;
 
     @Enumerated(EnumType.STRING)
-    private Status ancienStatus;
+    private Status oldStatus;
 
     @Enumerated(EnumType.STRING)
-    private Status nouveauStatus;
+    private Status newStatus;
 
     @Size(min = 3, max = 100)
-    private String commentaire;
+    private String comment;
 
     private LocalDateTime date;
 
-    private String auteur;
+    private String author;
 }

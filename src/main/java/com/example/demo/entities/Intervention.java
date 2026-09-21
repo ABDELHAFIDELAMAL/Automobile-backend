@@ -1,8 +1,8 @@
 package com.example.demo.entities;
 
-import com.example.demo.enums.Priorite;
+import com.example.demo.enums.Priority;
 import com.example.demo.enums.Status;
-import com.example.demo.enums.TypeIntervention;
+import com.example.demo.enums.InterventionType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -25,12 +25,12 @@ public class Intervention {
 
     @ManyToOne
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @JoinColumn(name = "vehicule_id")
-    private Vehicule vehicule;
+    @JoinColumn(name = "vehicle_id")
+    private Vehicle vehicle;
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private TypeIntervention type;
+    private InterventionType type;
 
     private String description;
 
@@ -40,22 +40,22 @@ public class Intervention {
     private Status status;
 
     @Enumerated(EnumType.STRING)
-    private Priorite priorite;
+    private Priority priority;
 
     @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "mecanicien_id")
-    private Mecanicien mecanicien;
+    @JoinColumn(name = "mechanic_id")
+    private Mechanic mechanic;
 
-    private Double coutEstime;
+    private Double estimatedCost;
 
-    private LocalDateTime dateDepot;
+    private LocalDateTime depositDate;
 
-    private LocalDateTime dateRestitutionPrevue;
+    private LocalDateTime estimatedReturnDate;
 
-    private LocalDateTime dateCloture;
+    private LocalDateTime closureDate;
 
     @OneToMany(mappedBy = "intervention", cascade = CascadeType.ALL)
-    private List<HistoriqueIntervention> historiqueInterventionList;
+    private List<InterventionHistory> interventionHistoryList;
 
 }

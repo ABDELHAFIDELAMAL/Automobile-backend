@@ -1,9 +1,10 @@
 package com.example.demo.repositories;
 
 import com.example.demo.entities.Intervention;
-import com.example.demo.entities.Mecanicien;
+import com.example.demo.entities.Mechanic;
+import com.example.demo.enums.Priority;
 import com.example.demo.enums.Status;
-import com.example.demo.enums.TypeIntervention;
+import com.example.demo.enums.InterventionType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,23 +15,25 @@ import java.util.List;
 
 @Repository
 public interface InterventionRepository
-    extends JpaRepository<Intervention , Long> {
+        extends JpaRepository<Intervention, Long> {
 
-    List<Intervention> findInterventionsByMecanicien(Mecanicien mecanicien);
+    List<Intervention> findInterventionsByMechanic(Mechanic mechanic);
 
-    List<Intervention> findByDateRestitutionPrevueBeforeAndStatusNot(LocalDateTime dateRestitutionPrevue, Status status);
+    List<Intervention> findInterventionByType(InterventionType type);
 
-    List<Intervention> findInterventionByType(TypeIntervention type);
+    List<Intervention> findByEstimatedReturnDateBeforeAndStatusNot(LocalDateTime date, Status status);
 
-    long countByDateDepotBetween(LocalDateTime debutAujourdhui, LocalDateTime finAujourdhui);
+    long countByDepositDateBetween(LocalDateTime startOfToday, LocalDateTime endOfToday);
 
     long countByStatus(Status status);
 
     List<Intervention> findByStatus(Status status);
 
-    @Query("SELECT i FROM Intervention i WHERE i.dateRestitutionPrevue < :maintenant AND i.status NOT IN :statusExclus")
-    List<Intervention> findRetards(@Param("maintenant") LocalDateTime maintenant, @Param("statusExclus") List<Status> statusExclus);
+    @Query("SELECT i FROM Intervention i WHERE i.estimatedReturnDate < :now AND i.status NOT IN :excludedStatus")
+    List<Intervention> findDelayedInterventions(@Param("now") LocalDateTime now, @Param("excludedStatus") List<Status> excludedStatus);
 
-    boolean existsByVehiculeIdAndTypeAndDescription(Long vehiculeId, TypeIntervention type, String description);
+    boolean existsByVehicleIdAndTypeAndDescription(Long vehicleId, InterventionType type, String description);
+
+    List<Intervention> findByPriority(Priority priority);
 
 }

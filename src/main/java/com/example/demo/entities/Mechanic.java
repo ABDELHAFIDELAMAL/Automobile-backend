@@ -1,6 +1,6 @@
 package com.example.demo.entities;
 
-import com.example.demo.enums.Specialite;
+import com.example.demo.enums.Specialty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -8,14 +8,14 @@ import lombok.*;
 import java.util.List;
 
 @Entity
-@Table(name = "mecaniciens")
+@Table(name = "mechanics")
 @Getter
 @Setter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Mecanicien {
+public class Mechanic {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,16 +23,16 @@ public class Mecanicien {
 
     @Size(min = 3, max = 50)
     @Column(nullable = false)
-    private String nom;
+    private String name;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Specialite specialite;
+    private Specialty specialty;
 
     @Column(nullable = false)
-    private boolean disponible = true;
+    private boolean available = true;
 
-    @OneToMany(mappedBy = "mecanicien", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "mechanic", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Intervention> interventions;
 
 }

@@ -1,14 +1,8 @@
 package com.example.demo;
 
 import com.example.demo.entities.*;
-import com.example.demo.entities.users.Utilisateur;
 import com.example.demo.enums.*;
-import com.example.demo.services.historique.HistoriqueService;
-import com.example.demo.services.intervention.InterventionService;
-import com.example.demo.services.mecanicien.MecanicienService;
-import com.example.demo.services.user.UserService;
-import com.example.demo.services.vehicule.VehiculeService;
-import org.hibernate.validator.internal.constraintvalidators.hv.UUIDValidator;
+import com.example.demo.services.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,7 +11,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @SpringBootApplication
 public class AutomobileApplication {
@@ -27,179 +20,160 @@ public class AutomobileApplication {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    CommandLineRunner start(UserService userService , InterventionService interventionService, MecanicienService mecanicienService, VehiculeService vehiculeService, HistoriqueService historiqueService){
+    CommandLineRunner start(IUserService userService,
+                            IInterventionService interventionService,
+                            IMechanicService mechanicService,
+                            IVehicleService vehicleService,
+                            IInterventionHistoryService interventionHistoryService) {
         return args -> {
 
+            User user1 = new User();
+            user1.addRole(Role.ADMIN);
+            user1.addRole(Role.CONSEILLER);
+            user1.setFirstName("Abdelhafid");
+            user1.setLastName("EL AMAL");
+            user1.setPassword("k10888");
+            user1.setEnabled(true);
+            user1.setEmail("abdelhafid.el-amal@capgemini.com");
+            userService.createUser(user1);
 
-            Utilisateur utilisateur = new Utilisateur();
-            utilisateur.ajouterRole(Role.ADMIN);
-            utilisateur.ajouterRole(Role.CONSEILLER);
-            utilisateur.setNom("EL AMAL");
-            utilisateur.setPrenom("Abdelhafid");
-            utilisateur.setPassword("k10888");
-            utilisateur.setEnabled(true);
-            utilisateur.setEmail("abdelhafid.el-amal@capgemini.com");
-            userService.createUtilisateur(utilisateur);
+            User user2 = new User();
+            user2.addRole(Role.TECHNICIEN);
+            user2.setFirstName("Chakib");
+            user2.setLastName("EL IROUI");
+            user2.setPassword("k100000");
+            user2.setEnabled(false);
+            user2.setEmail("chakib.el-iroui@capgemini.com");
+            userService.createUser(user2);
 
-            Utilisateur utilisateur1 = new Utilisateur();
-            utilisateur1.ajouterRole(Role.TECHNICIEN);
-            utilisateur1.setNom("EL IROUI");
-            utilisateur1.setPrenom("Chakib");
-            utilisateur1.setPassword("k100000");
-            utilisateur1.setEnabled(false);
-            utilisateur1.setEmail("chakib.el-iroui@capgemini.com");
-            userService.createUtilisateur(utilisateur1);
+            Mechanic mechanic = new Mechanic();
+            mechanic.setSpecialty(Specialty.DIAGNOSTICS);
+            mechanic.setName("mec001");
+            mechanic.setAvailable(true);
+            mechanicService.createMechanic(mechanic);
 
+            Vehicle vehicle = new Vehicle();
+            vehicle.setMatricule("Maroc-01-A");
+            vehicle.setMileage(2000);
+            vehicle.setModel("M-2023");
+            vehicle.setYear(2023);
+            vehicle.setMake("BMW");
+            vehicle.setDummyClient(true);
+            vehicleService.createVehicle(vehicle);
 
             Intervention intervention = new Intervention();
-            intervention.setStatus(Status.RECUE);
+            intervention.setStatus(Status.RECEIVED);
             intervention.setDiagnostic("diagnostic Numero 001");
-            intervention.setPriorite(Priorite.MOYENNE);
-            intervention.setType(TypeIntervention.DIAGNOSTIC);
-            intervention.setDateCloture(LocalDateTime.now());
-            intervention.setCoutEstime(1500.00);
-            intervention.setDateDepot(LocalDateTime.now());
-            Mecanicien mecanicien = new Mecanicien();
-            mecanicien.setSpecialite(Specialite.DIAGNOSTIC);
-            mecanicien.setNom("mec001");
-            mecanicien.setDisponible(true);
-            mecanicienService.createMecanicien(mecanicien);
-            intervention.setMecanicien(mecanicien);
-
-            Vehicule vehicule = new Vehicule();
-            vehicule.setImmatriculation("Maroc-01-A");
-            vehicule.setKilometrage(2000);
-            vehicule.setModele("M-2023");
-            vehicule.setAnnee(2023);
-            vehicule.setMarque("BMW");
-            vehicule.setClientFictif(true);
-            vehiculeService.createVehicule(vehicule);
-
-            intervention.setVehicule(vehicule);
+            intervention.setPriority(Priority.MEDIUM);
+            intervention.setType(InterventionType.DIAGNOSTIC);
+            intervention.setClosureDate(LocalDateTime.now());
+            intervention.setEstimatedCost(1500.00);
+            intervention.setDepositDate(LocalDateTime.now());
+            intervention.setMechanic(mechanic);
+            intervention.setVehicle(vehicle);
             intervention.setDescription("vehicle bmw m4 cs");
-            intervention.setDateRestitutionPrevue(LocalDateTime.now());
-            intervention.setDateRestitutionPrevue(LocalDateTime.MAX);
+            intervention.setEstimatedReturnDate(LocalDateTime.MAX);
 
-            Intervention savedIntervention =
-                    interventionService.createIntervention(intervention);
+            Intervention savedIntervention = interventionService.createIntervention(intervention);
 
-            HistoriqueIntervention hist = new HistoriqueIntervention();
-            hist.setCommentaire("Diagnostic at : " + LocalDateTime.now());
+            InterventionHistory hist = new InterventionHistory();
+            hist.setComment("Diagnostic at : " + LocalDateTime.now());
             hist.setDate(LocalDateTime.now());
-            hist.setAuteur("Mohsin EL AMAL");
-
+            hist.setAuthor("Mohsin EL AMAL");
             hist.setIntervention(savedIntervention);
-            hist.setAncienStatus(savedIntervention.getStatus());
-            hist.setNouveauStatus(Status.DIAGNOSTIC_EN_COURS);
+            hist.setOldStatus(savedIntervention.getStatus());
+            hist.setNewStatus(Status.DIAGNOSTIC_IN_PROGRESS);
+            interventionHistoryService.createHistory(hist);
 
-            historiqueService.createHistorique(hist);
+            User advisor = new User();
+            advisor.addRole(Role.CONSEILLER);
+            advisor.setLastName("BENNANI");
+            advisor.setFirstName("Youssef");
+            advisor.setPassword("at1020");
+            advisor.setEnabled(true);
+            advisor.setEmail("youssef.bennani@capgemini.com");
+            userService.createUser(advisor);
 
-            Utilisateur conseiller = new Utilisateur();
-            conseiller.ajouterRole(Role.CONSEILLER);
-            conseiller.setNom("BENNANI");
-            conseiller.setPrenom("Youssef");
-            conseiller.setPassword("at1020");
-            conseiller.setEnabled(true);
-            conseiller.setEmail("youssef.bennani@capgemini.com");
-            userService.createUtilisateur(conseiller);
-
-            Utilisateur manager = new Utilisateur();
-            manager.ajouterRole(Role.MANAGER); // Ou Role.MANAGER selon votre Enum
-            manager.setNom("ALAMI");
-            manager.setPrenom("Amine");
+            User manager = new User();
+            manager.addRole(Role.MANAGER);
+            manager.setLastName("ALAMI");
+            manager.setFirstName("Amine");
             manager.setPassword("mgr3000");
             manager.setEnabled(true);
             manager.setEmail("amine.alami@capgemini.com");
-            userService.createUtilisateur(manager);
+            userService.createUser(manager);
 
+            Mechanic mecElec = new Mechanic();
+            mecElec.setSpecialty(Specialty.ELECTRICAL_ELECTRONICS);
+            mecElec.setName("Hassan Bouras");
+            mecElec.setAvailable(true);
+            mechanicService.createMechanic(mecElec);
 
-            // ==========================================
-            // 2. ÉQUIPE DE MÉCANICIENS (SPÉCIALITÉS COMPLÈTES)
-            // ==========================================
+            Mechanic mecPneu = new Mechanic();
+            mecPneu.setSpecialty(Specialty.TIRES);
+            mecPneu.setName("Karim Tazi");
+            mecPneu.setAvailable(false);
+            mechanicService.createMechanic(mecPneu);
 
-            // Mécanicien 1 : Électricité / Électronique (Disponible)
-            Mecanicien mecElec = new Mecanicien();
-            mecElec.setSpecialite(Specialite.ELECTRICITE_ELECTRONIQUE);
-            mecElec.setNom("Hassan Bouras");
-            mecElec.setDisponible(true);
-            mecanicienService.createMecanicien(mecElec);
+            Vehicle vReal = new Vehicle();
+            vReal.setMatricule("Maroc-99-B-1234");
+            vReal.setMileage(85000);
+            vReal.setModel("Golf 7");
+            vReal.setYear(2019);
+            vReal.setMake("Volkswagen");
+            vReal.setDummyClient(false);
+            vehicleService.createVehicle(vReal);
 
+            Vehicle vDummy = new Vehicle();
+            vDummy.setMatricule("Maroc-77-X-5678"); // Variable corrigée ici (vFictif -> vDummy)
+            vDummy.setMileage(12000);
+            vDummy.setModel("Clio 5");
+            vDummy.setYear(2021);
+            vDummy.setMake("Renault");
+            vDummy.setDummyClient(true);
+            vehicleService.createVehicle(vDummy);
 
-            Mecanicien mecPneu = new Mecanicien();
-            mecPneu.setSpecialite(Specialite.PNEUMATIQUE);
-            mecPneu.setNom("Karim Tazi");
-            mecPneu.setDisponible(false);
-            mecanicienService.createMecanicien(mecPneu);
+            Intervention intDelayed = new Intervention();
+            intDelayed.setStatus(Status.UNDER_REPAIR);
+            intDelayed.setPriority(Priority.HIGH);
+            intDelayed.setType(InterventionType.REPAIR);
+            intDelayed.setDescription("Changement d'embrayage complet");
+            intDelayed.setDiagnostic("Butée d'embrayage totalement détruite");
+            intDelayed.setEstimatedCost(4500.00);
+            intDelayed.setDepositDate(LocalDateTime.now().minusDays(5));
+            intDelayed.setEstimatedReturnDate(LocalDateTime.now().minusDays(1));
+            intDelayed.setMechanic(mecElec);
+            intDelayed.setVehicle(vReal);
+            Intervention savedIntDelayed = interventionService.createIntervention(intDelayed);
 
+            InterventionHistory histDelayed = new InterventionHistory();
+            histDelayed.setComment("Passage en réparation après validation du devis par téléphone");
+            histDelayed.setDate(LocalDateTime.now().minusDays(4));
+            histDelayed.setAuthor("Youssef BENNANI");
+            histDelayed.setIntervention(savedIntDelayed);
+            histDelayed.setOldStatus(Status.QUOTATION_TO_VALIDATE);
+            histDelayed.setNewStatus(Status.UNDER_REPAIR);
+            interventionHistoryService.createHistory(histDelayed);
 
-            Vehicule vReel = new Vehicule();
-            vReel.setImmatriculation("Maroc-99-B-1234");
-            vReel.setKilometrage(85000);
-            vReel.setModele("Golf 7");
-            vReel.setAnnee(2019);
-            vReel.setMarque("Volkswagen");
-            vReel.setClientFictif(false);
-            vehiculeService.createVehicule(vReel);
+            Intervention intNew = new Intervention();
+            intNew.setStatus(Status.RECEIVED);
+            intNew.setPriority(Priority.LOW);
+            intNew.setType(InterventionType.REPAIR);
+            intNew.setEstimatedCost(4500.00);
+            intNew.setDescription("Changement de 2 pneus avant + Parallélisme");
+            intNew.setDepositDate(LocalDateTime.now());
+            intNew.setEstimatedReturnDate(LocalDateTime.now().plusHours(4));
+            intNew.setVehicle(vDummy);
+            Intervention savedIntNew = interventionService.createIntervention(intNew);
 
-            Vehicule vFictif = new Vehicule();
-            vFictif.setImmatriculation("Maroc-77-X-5678");
-            vFictif.setKilometrage(12000);
-            vFictif.setModele("Clio 5");
-            vFictif.setAnnee(2021);
-            vFictif.setMarque("Renault");
-            vFictif.setClientFictif(true);
-            vehiculeService.createVehicule(vFictif);
-
-
-            Intervention intRetard = new Intervention();
-            intRetard.setStatus(Status.EN_REPARATION);
-            intRetard.setPriorite(Priorite.HAUTE);
-            intRetard.setType(TypeIntervention.REPARATION);
-            intRetard.setDescription("Changement d'embrayage complet");
-            intRetard.setDiagnostic("Butée d'embrayage totalement détruite");
-            intRetard.setCoutEstime(4500.00);
-            intRetard.setDateDepot(LocalDateTime.now().minusDays(5));
-            intRetard.setDateRestitutionPrevue(LocalDateTime.now().minusDays(1));
-            intRetard.setMecanicien(mecElec);
-            intRetard.setVehicule(vReel);
-            Intervention savedIntRetard = interventionService.createIntervention(intRetard);
-
-            HistoriqueIntervention histRetard = new HistoriqueIntervention();
-            histRetard.setCommentaire("Passage en réparation après validation du devis par téléphone");
-            histRetard.setDate(LocalDateTime.now().minusDays(4));
-            histRetard.setAuteur("Youssef BENNANI");
-            histRetard.setIntervention(savedIntRetard);
-            histRetard.setAncienStatus(Status.DEVIS_A_VALIDER);
-            histRetard.setNouveauStatus(Status.EN_REPARATION);
-            historiqueService.createHistorique(histRetard);
-
-
-            Intervention intNouvelle = new Intervention();
-            intNouvelle.setStatus(Status.RECUE);
-            intNouvelle.setPriorite(Priorite.BASSE);
-            intNouvelle.setType(TypeIntervention.PNEUMATIQUES);
-            intNouvelle.setCoutEstime(4500.00);
-            intNouvelle.setDescription("Changement de 2 pneus avant + Parallélisme");
-            intNouvelle.setDateDepot(LocalDateTime.now()); // Reçue aujourd'hui
-            intNouvelle.setDateRestitutionPrevue(LocalDateTime.now().plusHours(4));
-            intNouvelle.setVehicule(vFictif);
-
-            Intervention savedIntNouvelle = interventionService.createIntervention(intNouvelle);
-
-            HistoriqueIntervention histNouvelle = new HistoriqueIntervention();
-            histNouvelle.setCommentaire("Ouverture du dossier d'accueil à l'atelier");
-            histNouvelle.setDate(LocalDateTime.now());
-            histNouvelle.setAuteur("Youssef BENNANI");
-            histNouvelle.setIntervention(savedIntNouvelle);
-            histNouvelle.setAncienStatus(null);
-            histNouvelle.setNouveauStatus(Status.RECUE);
-            historiqueService.createHistorique(histNouvelle);
-
+            InterventionHistory histNew = new InterventionHistory();
+            histNew.setComment("Ouverture du dossier d'accueil à l'atelier");
+            histNew.setDate(LocalDateTime.now());
+            histNew.setAuthor("Youssef BENNANI");
+            histNew.setIntervention(savedIntNew);
+            histNew.setOldStatus(null);
+            histNew.setNewStatus(Status.RECEIVED);
+            interventionHistoryService.createHistory(histNew);
         };
     }
 }

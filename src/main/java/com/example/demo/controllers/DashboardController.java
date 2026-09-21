@@ -1,8 +1,8 @@
 package com.example.demo.controllers;
 
-import com.example.demo.dto.DashboardDto;
+import com.example.demo.entities.Dashboard;
 import com.example.demo.response.ApiResponse;
-import com.example.demo.services.dashboard.DashboardService;
+import com.example.demo.services.DashboardService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,8 +22,8 @@ public class DashboardController {
     }
 
     @GetMapping("/stats")
-    public ResponseEntity<ApiResponse> getAtelierStats() {
-        DashboardDto stats = dashboardService.getAtelierStats();
+    public ResponseEntity<ApiResponse> getWorkshopStats() {
+        Dashboard stats = dashboardService.getWorkshopStats();
 
         ApiResponse response = new ApiResponse(
                 "Dashboard stats fetched successfully",

@@ -1,4 +1,4 @@
-package com.example.demo.entities.users;
+package com.example.demo.entities;
 
 import com.example.demo.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -7,18 +7,17 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "utilisateurs")
+@Table(name = "users")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Utilisateur {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,11 +25,11 @@ public class Utilisateur {
 
     @NotBlank
     @Size(min = 3, max = 50)
-    private String nom;
+    private String firstName;
 
     @NotBlank
     @Size(min = 3, max = 50)
-    private String prenom;
+    private String lastName;
 
     @Email
     @Column(unique = true)
@@ -42,8 +41,8 @@ public class Utilisateur {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
-            name = "utilisateur_roles",
-            joinColumns = @JoinColumn(name = "utilisateur_id")
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id")
     )
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
@@ -52,7 +51,7 @@ public class Utilisateur {
     @Builder.Default
     private boolean enabled = true;
 
-    public void ajouterRole(Role role) {
+    public void addRole(Role role) {
         this.roles.add(role);
     }
 }

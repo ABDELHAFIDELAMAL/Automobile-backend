@@ -1,12 +1,13 @@
 package com.example.demo.controllers;
 
 import com.example.demo.entities.Intervention;
-import com.example.demo.entities.Mecanicien;
+import com.example.demo.entities.Mechanic;
+import com.example.demo.enums.Priority;
 import com.example.demo.enums.Status;
-import com.example.demo.enums.TypeIntervention;
+import com.example.demo.enums.InterventionType;
 import com.example.demo.exceptions.AllReadyExistException;
 import com.example.demo.response.ApiResponse;
-import com.example.demo.services.intervention.IInterventionService;
+import com.example.demo.services.IInterventionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import java.util.List;
 @RequestMapping(path = "/api/v1/interventions")
 @CrossOrigin(origins = "*")
 public class InterventionController {
+
     private final IInterventionService interventionService;
 
     public InterventionController(IInterventionService interventionService) {
@@ -33,7 +35,7 @@ public class InterventionController {
     @GetMapping(path = "/{id}")
     public ResponseEntity<ApiResponse> getInterventionById(@PathVariable Long id) {
         Intervention data = interventionService.getInterventionById(id);
-        ApiResponse response = new ApiResponse("Interventions fetched successfully", data, true);
+        ApiResponse response = new ApiResponse("Intervention fetched successfully", data, true);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -59,82 +61,89 @@ public class InterventionController {
         }
     }
 
-    @PatchMapping(path = "assign/{id}")
-    public ResponseEntity<ApiResponse> assignMecanicien(@PathVariable Long id, @RequestBody Mecanicien mecanicien) {
-        Intervention data = interventionService.assignMecanicien(id, mecanicien);
+    @PatchMapping(path = "/assign/{id}")
+    public ResponseEntity<ApiResponse> assignMechanic(@PathVariable Long id, @RequestBody Mechanic mechanic) {
+        Intervention data = interventionService.assignMechanic(id, mechanic);
         ApiResponse response = new ApiResponse("Mechanic assigned successfully", data, true);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping(path = "/setcout/{id}")
-    public ResponseEntity<ApiResponse> setCoutEstime(@PathVariable Long id,  @RequestParam("coutEstime") Double cout) {
-        Intervention data = interventionService.setCoutEstime(id, cout);
+    @PostMapping(path = "/set-cost/{id}")
+    public ResponseEntity<ApiResponse> setEstimatedCost(@PathVariable Long id, @RequestParam("estimatedCost") Double cost) {
+        Intervention data = interventionService.setEstimatedCost(id, cost);
         ApiResponse response = new ApiResponse("Estimated cost updated successfully", data, true);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping(path = "/ajouter/diagnostic/{id}")
+    @PostMapping(path = "/add-diagnostic/{id}")
     public ResponseEntity<ApiResponse> addDiagnostic(@PathVariable Long id, @RequestParam String diagnostic) {
         Intervention data = interventionService.addDiagnostic(id, diagnostic);
         ApiResponse response = new ApiResponse("Diagnostic added successfully", data, true);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PatchMapping(path = "/change/status/{id}")
-    public ResponseEntity<ApiResponse> changerStatus(@PathVariable Long id, @RequestBody Status statusIntervention , @RequestParam String auteur) {
-        Intervention data = interventionService.changerStatus(id, statusIntervention , auteur);
+    @PatchMapping(path = "/change-status/{id}")
+    public ResponseEntity<ApiResponse> changeStatus(@PathVariable Long id, @RequestBody Status statusIntervention, @RequestParam String author) {
+        Intervention data = interventionService.changeStatus(id, statusIntervention, author);
         ApiResponse response = new ApiResponse("Status updated successfully", data, true);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PatchMapping(path = "/terminer/{id}")
-    public ResponseEntity<ApiResponse> terminer(@PathVariable Long id) {
-        Intervention data = interventionService.terminer(id);
-        ApiResponse response = new ApiResponse("Intervention marked as finished", data, true);
+    @PatchMapping(path = "/complete/{id}")
+    public ResponseEntity<ApiResponse> complete(@PathVariable Long id) {
+        Intervention data = interventionService.complete(id);
+        ApiResponse response = new ApiResponse("Intervention marked as completed", data, true);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PatchMapping(path = "/restituer/{id}")
-    public ResponseEntity<ApiResponse> restituer(@PathVariable Long id) {
-        Intervention data = interventionService.restituer(id);
+    @PatchMapping(path = "/return/{id}")
+    public ResponseEntity<ApiResponse> returnIntervention(@PathVariable Long id) {
+        Intervention data = interventionService.returnIntervention(id);
         ApiResponse response = new ApiResponse("Vehicle returned successfully", data, true);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping(path = "/by/mecanicien/{id}")
-    public ResponseEntity<ApiResponse> getInterventionByMecanicien(@PathVariable Long id) {
-        List<Intervention> data = interventionService.getInterventionByMecanicien(id);
+    @GetMapping(path = "/by/mechanic/{id}")
+    public ResponseEntity<ApiResponse> getInterventionsByMechanic(@PathVariable Long id) {
+        List<Intervention> data = interventionService.getInterventionsByMechanic(id);
         ApiResponse response = new ApiResponse("Interventions fetched for mechanic", data, true);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping(path = "/by/vehicule/{id}")
-    public ResponseEntity<ApiResponse> getInterventionByVehicule(@PathVariable Long id) {
-        List<Intervention> data = interventionService.getInterventionByVehicule(id);
+    @GetMapping(path = "/by/vehicle/{id}")
+    public ResponseEntity<ApiResponse> getInterventionsByVehicle(@PathVariable Long id) {
+        List<Intervention> data = interventionService.getInterventionsByVehicle(id);
         ApiResponse response = new ApiResponse("Interventions fetched for vehicle", data, true);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping(path = "/en/retard")
-    public ResponseEntity<ApiResponse> getEnRetard() {
-        List<Intervention> data = interventionService.getEnRetard();
+    @GetMapping(path = "/delayed")
+    public ResponseEntity<ApiResponse> getDelayedInterventions() {
+        List<Intervention> data = interventionService.getDelayedInterventions();
         ApiResponse response = new ApiResponse("Delayed interventions fetched successfully", data, true);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping(path = "/calculer/cout/total")
-    public ResponseEntity<ApiResponse> calculerCoutTotal() {
-        Double data = interventionService.calculerCoutTotal();
+    @GetMapping(path = "/calculate-total-cost")
+    public ResponseEntity<ApiResponse> calculateTotalCost() {
+        Double data = interventionService.calculateTotalCost();
         ApiResponse response = new ApiResponse("Total cost calculated successfully", data, true);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping(path = "/by/type")
     public ResponseEntity<ApiResponse> getInterventionsByType(@RequestParam("type") String typeStr) {
-        TypeIntervention type = TypeIntervention.valueOf(typeStr.toUpperCase());
+        InterventionType type = InterventionType.valueOf(typeStr.toUpperCase());
         List<Intervention> data = interventionService.getInterventionsByType(type);
         ApiResponse response = new ApiResponse("Interventions fetched by type", data, true);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping(path = "/by/priority")
+    public ResponseEntity<ApiResponse> getInterventionsByPriority(@RequestParam("priority") String priorityStr) {
+        Priority priority = Priority.valueOf(priorityStr.toUpperCase());
+        List<Intervention> data = interventionService.getInterventionsByPriority(priority);
+        ApiResponse response = new ApiResponse("Interventions fetched by priority successfully", data, true);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }
