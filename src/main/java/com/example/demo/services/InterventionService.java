@@ -10,6 +10,7 @@ import com.example.demo.repositories.InterventionRepository;
 import com.example.demo.repositories.MechanicRepository;
 import com.example.demo.repositories.VehicleRepository;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,6 +20,7 @@ import static com.example.demo.enums.Status.*;
 
 @Service
 @Transactional
+@Slf4j
 public class InterventionService implements IInterventionService {
 
     private final InterventionRepository interventionRepository;
@@ -51,6 +53,7 @@ public class InterventionService implements IInterventionService {
 
     @Override
     public Intervention createIntervention(Intervention intervention) {
+
         boolean exist = interventionRepository.existsByVehicleIdAndTypeAndDescription(
                 intervention.getVehicle().getId(),
                 intervention.getType(),
@@ -60,6 +63,7 @@ public class InterventionService implements IInterventionService {
         if (exist) {
             throw new AllReadyExistException("Intervention already exists with id " + intervention.getId());
         } else {
+            log.warn("Set vehicle and mechanic into intervention !");
             return interventionRepository.save(intervention);
         }
     }

@@ -37,7 +37,7 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping(path = "/username")
+    @GetMapping(path = "/by/username")
     public ResponseEntity<ApiResponse> getUserByUsername(@RequestParam String username) {
         Optional<User> user = userService.getUserByUsername(username);
         ApiResponse response = new ApiResponse("User search completed", user, true);
@@ -92,7 +92,7 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping(path = "/assign-role/{id}")
+    @PutMapping(path = "/assign/role/{id}")
     public ResponseEntity<ApiResponse> assignRole(@PathVariable Long id, @RequestBody Role role) {
         userService.assignRole(id, role);
         ApiResponse response = new ApiResponse("Role assigned successfully", null, true);

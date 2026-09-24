@@ -1,6 +1,7 @@
 package com.example.demo.entities;
 
 import com.example.demo.enums.Specialty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -25,8 +26,9 @@ public class Mechanic {
     @Column(nullable = false)
     private String name;
 
-    @Enumerated(EnumType.STRING)
+
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Specialty specialty;
 
     @Column(nullable = false)
