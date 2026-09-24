@@ -50,7 +50,7 @@ public class VehicleService implements IVehicleService {
                 .orElseThrow(() -> new RuntimeException("Vehicle does not exist with id: " + id));
 
         existingVehicle.setMake(vehicle.getMake());
-        existingVehicle.setModel(vehicle.getModel());
+        existingVehicle.setModele(vehicle.getModele());
         existingVehicle.setYear(vehicle.getYear());
         existingVehicle.setMileage(vehicle.getMileage());
         existingVehicle.setMatricule(vehicle.getMatricule());
@@ -106,7 +106,7 @@ public class VehicleService implements IVehicleService {
         List<Vehicle> result = new ArrayList<>();
         for (Vehicle vehicle : vehicles) {
             if (vehicle.getMake().contains(text)
-                    || vehicle.getModel().contains(text)
+                    || vehicle.getModele().contains(text)
                     || vehicle.getMatricule().contains(text)) {
                 result.add(vehicle);
             }

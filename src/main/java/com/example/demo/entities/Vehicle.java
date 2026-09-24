@@ -32,7 +32,7 @@ public class Vehicle {
 
     @NotNull
     @Column(nullable = false)
-    private String model;
+    private String modele;
 
     @NotNull
     @Column(nullable = false , name = "vehicle_year")

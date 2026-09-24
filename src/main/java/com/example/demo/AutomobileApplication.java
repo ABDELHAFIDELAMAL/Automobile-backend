@@ -16,8 +16,7 @@ public class AutomobileApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(AutomobileApplication.class, args);
-        log.info("L'application Spring Boot a démarré avec succès !");
-        log.warn("Ceci est un message d'avertissement.");
+        log.info(" Server running  ...!");
     }
 
     @Bean
@@ -56,7 +55,7 @@ public class AutomobileApplication {
             Vehicle vehicle = new Vehicle();
             vehicle.setMatricule("Maroc-01-A");
             vehicle.setMileage(2000);
-            vehicle.setModel("M-2023");
+            vehicle.setModele("M-2023");
             vehicle.setYear(2023);
             vehicle.setMake("BMW");
             vehicle.setDummyClient(true);
@@ -119,7 +118,7 @@ public class AutomobileApplication {
             Vehicle vReal = new Vehicle();
             vReal.setMatricule("Maroc-99-B-1234");
             vReal.setMileage(85000);
-            vReal.setModel("Golf 7");
+            vReal.setModele("Golf 7");
             vReal.setYear(2019);
             vReal.setMake("Volkswagen");
             vReal.setDummyClient(false);
@@ -128,7 +127,7 @@ public class AutomobileApplication {
             Vehicle vDummy = new Vehicle();
             vDummy.setMatricule("Maroc-77-X-5678"); // Variable corrigée ici (vFictif -> vDummy)
             vDummy.setMileage(12000);
-            vDummy.setModel("Clio 5");
+            vDummy.setModele("Clio 5");
             vDummy.setYear(2021);
             vDummy.setMake("Renault");
             vDummy.setDummyClient(true);
