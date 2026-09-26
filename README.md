@@ -28,5 +28,5 @@ Le backend expose une API REST sécurisée permettant :
 
 ---
 
-Backend : Spring Boot 3 + Spring Security + JWT + PostgresSQL
+Backend : Spring Boot 3 + Spring Security + Keycloak + JWT + PostgresSQL
 Frontend : Angular - Tailwind css
