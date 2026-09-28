@@ -54,7 +54,7 @@ public class VehicleService implements IVehicleService {
         existingVehicle.setYear(vehicle.getYear());
         existingVehicle.setMileage(vehicle.getMileage());
         existingVehicle.setMatricule(vehicle.getMatricule());
-        existingVehicle.setDummyClient(vehicle.isDummyClient());
+        existingVehicle.setDummyClient(vehicle.getDummyClient());
 
         return vehicleRepository.save(existingVehicle);
     }

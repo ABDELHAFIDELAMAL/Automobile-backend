@@ -45,7 +45,7 @@ public class Vehicle {
     private Integer mileage;
 
     @Column(nullable = false)
-    private boolean dummyClient = false;
+    private Boolean dummyClient = false;
 
     @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Intervention> interventions;
