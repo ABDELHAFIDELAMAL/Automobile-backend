@@ -20,31 +20,15 @@ public class AutomobileApplication {
     }
 
     @Bean
-    CommandLineRunner start(IUserService userService,
+    CommandLineRunner start(
                             IInterventionService interventionService,
                             IMechanicService mechanicService,
                             IVehicleService vehicleService,
                             IInterventionHistoryService interventionHistoryService) {
         return args -> {
 
-            User user1 = new User();
-            user1.addRole(Role.ADMIN);
-            user1.addRole(Role.CONSEILLER);
-            user1.setFirstName("Abdelhafid");
-            user1.setLastName("EL AMAL");
-            user1.setPassword("k10888");
-            user1.setEnabled(true);
-            user1.setEmail("abdelhafid.el-amal@capgemini.com");
-            userService.createUser(user1);
 
-            User user2 = new User();
-            user2.addRole(Role.TECHNICIEN);
-            user2.setFirstName("Chakib");
-            user2.setLastName("EL IROUI");
-            user2.setPassword("k100000");
-            user2.setEnabled(false);
-            user2.setEmail("chakib.el-iroui@capgemini.com");
-            userService.createUser(user2);
+
 
             Mechanic mechanic = new Mechanic();
             mechanic.setSpecialty(Specialty.DIAGNOSTICS);
@@ -85,23 +69,7 @@ public class AutomobileApplication {
             hist.setNewStatus(Status.DIAGNOSTIC_IN_PROGRESS);
             interventionHistoryService.createHistory(hist);
 
-            User advisor = new User();
-            advisor.addRole(Role.CONSEILLER);
-            advisor.setLastName("BENNANI");
-            advisor.setFirstName("Youssef");
-            advisor.setPassword("at1020");
-            advisor.setEnabled(true);
-            advisor.setEmail("youssef.bennani@capgemini.com");
-            userService.createUser(advisor);
 
-            User manager = new User();
-            manager.addRole(Role.MANAGER);
-            manager.setLastName("ALAMI");
-            manager.setFirstName("Amine");
-            manager.setPassword("mgr3000");
-            manager.setEnabled(true);
-            manager.setEmail("amine.alami@capgemini.com");
-            userService.createUser(manager);
 
             Mechanic mecElec = new Mechanic();
             mecElec.setSpecialty(Specialty.ELECTRICAL_ELECTRONICS);
