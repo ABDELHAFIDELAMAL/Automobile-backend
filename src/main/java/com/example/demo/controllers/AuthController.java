@@ -1,38 +1,37 @@
 package com.example.demo.controllers;
 
 import com.example.demo.dto.UserDto;
+import com.example.demo.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.reactive.function.BodyInserters;
+
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 public class AuthController {
 
-    private PasswordEncoder passwordEncoder;
-
     private final WebClient webClient = WebClient.create();
-
     private final String keycloakUrl = "http://localhost:8080";
     private final String realm = "AutomobileRealm";
-    private final String clientId = "AutomobileClient";
-    private final String clientSecret = "2iiaDQghtJdyrryWrlBwyTePRKwDNdQ1f0xgbOncxZ3NKkLPVNCwGSxurZGNBDtV8FB70FDx7QmJkjS6buebYP";
+    private final String clientId = "AutomobileSpringClient";
+    private final String clientSecret = "mOhpA6Ywa8PxDcas16D4dAoGM2f2dAHAUmYw0CXoyOrahqCv7zZM25KkY286E8FUyqKdIN1SEp2MLMvGcNOwko";
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody UserDto dto) {
+    public ResponseEntity<ApiResponse> register(@RequestBody UserDto dto) {
         try {
             String adminToken = fetchAdminToken();
 
             Map<String, Object> passwordCredential = Map.of(
                     "type", "password",
-                    "value", passwordEncoder.encode(dto.getPassword()) ,
+                    "value", dto.getPassword(),
                     "temporary", false
             );
 
@@ -52,10 +51,18 @@ public class AuthController {
                     .toBodilessEntity()
                     .block();
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "Registration successful"));
+            dto.setPassword(null);
 
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new ApiResponse("Registration successful", dto, true));
+
+        } catch (WebClientResponseException e) {
+            String errorMessage = "Keycloak error: " + e.getResponseBodyAsString();
+            return ResponseEntity.status(e.getStatusCode())
+                    .body(new ApiResponse(errorMessage, null, false));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse(e.getMessage(), null, false));
         }
     }
 
@@ -69,6 +76,10 @@ public class AuthController {
                 .retrieve()
                 .bodyToMono(Map.class)
                 .block();
+
+        if (response == null || !response.containsKey("access_token")) {
+            throw new RuntimeException("Failed to retrieve admin token from Keycloak");
+        }
 
         return (String) response.get("access_token");
     }
