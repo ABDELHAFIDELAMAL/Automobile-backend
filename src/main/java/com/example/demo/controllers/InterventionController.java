@@ -103,20 +103,6 @@ public class InterventionController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping(path = "/by/mechanic/{id}")
-    public ResponseEntity<ApiResponse> getInterventionsByMechanic(@PathVariable Long id) {
-        List<Intervention> data = interventionService.getInterventionsByMechanic(id);
-        ApiResponse response = new ApiResponse("Interventions fetched for mechanic", data, true);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @GetMapping(path = "/by/vehicle/{id}")
-    public ResponseEntity<ApiResponse> getInterventionsByVehicle(@PathVariable Long id) {
-        List<Intervention> data = interventionService.getInterventionsByVehicle(id);
-        ApiResponse response = new ApiResponse("Interventions fetched for vehicle", data, true);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
     @GetMapping(path = "/delayed")
     public ResponseEntity<ApiResponse> getDelayedInterventions() {
         List<Intervention> data = interventionService.getDelayedInterventions();

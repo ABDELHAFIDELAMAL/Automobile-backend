@@ -1,9 +1,9 @@
 package com.example.demo.services;
 
 import com.example.demo.entities.*;
+import com.example.demo.enums.InterventionType;
 import com.example.demo.enums.Priority;
 import com.example.demo.enums.Status;
-import com.example.demo.enums.InterventionType;
 import com.example.demo.exceptions.AllReadyExistException;
 import com.example.demo.repositories.HistoryRepository;
 import com.example.demo.repositories.InterventionRepository;
@@ -12,7 +12,7 @@ import com.example.demo.repositories.VehicleRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -40,19 +40,94 @@ public class InterventionService implements IInterventionService {
         this.vehicleRepository = vehicleRepository;
     }
 
+    private Intervention findOrThrow(Long id) {
+        return interventionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Intervention not found with id : " + id));
+    }
+
+    private String authorOf(Intervention intervention) {
+        return intervention.getMechanic() != null
+                ? intervention.getMechanic().getName()
+                : "SYSTEM";
+    }
+
+    private void saveHistory(Intervention intervention, Status oldStatus, Status newStatus,
+                             String comment, String author) {
+        InterventionHistory history = new InterventionHistory();
+        history.setIntervention(intervention);
+        history.setOldStatus(oldStatus);
+        history.setNewStatus(newStatus);
+        history.setComment(comment);
+        history.setAuthor(author);
+        history.setDate(LocalDateTime.now());
+        historyRepository.save(history);
+    }
+
+    private void releaseMechanic(Intervention intervention) {
+        Mechanic mechanic = intervention.getMechanic();
+        if (mechanic != null) {
+            mechanic.setAvailable(true);
+            mechanicRepository.save(mechanic);
+        }
+    }
+
+
     @Override
+    @Transactional
     public List<Intervention> getAllInterventions() {
         return interventionRepository.findAll();
     }
 
     @Override
+    @Transactional
     public Intervention getInterventionById(Long id) {
-        return interventionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Intervention not found id " + id));
+        return findOrThrow(id);
+    }
+
+
+    @Override
+    @Transactional
+    public List<Intervention> getDelayedInterventions() {
+        List<Status> excludedStatuses = List.of(RETURNED, CANCELLED);
+        return interventionRepository.findDelayedInterventions(LocalDateTime.now(), excludedStatuses);
+    }
+
+    @Override
+    @Transactional
+    public List<Intervention> getOverdueInterventions() {
+        return interventionRepository.findByEstimatedReturnDateBeforeAndStatusNot(
+                LocalDateTime.now().toLocalDate().atStartOfDay(),
+                RETURNED
+        );
+    }
+
+    @Override
+    @Transactional
+    public Double calculateTotalCost() {
+        return interventionRepository.findAll().stream()
+                .filter(i -> i.getEstimatedCost() != null)
+                .mapToDouble(Intervention::getEstimatedCost)
+                .sum();
+    }
+
+    @Override
+    @Transactional
+    public List<Intervention> getInterventionsByType(InterventionType type) {
+        return interventionRepository.findInterventionByType(type);
+    }
+
+    @Override
+    @Transactional
+    public List<Intervention> getInterventionsByPriority(Priority priority) {
+        return interventionRepository.findByPriority(priority);
     }
 
     @Override
     public Intervention createIntervention(Intervention intervention) {
+
+        if (intervention.getVehicle() == null || intervention.getVehicle().getId() == null) {
+            throw new IllegalArgumentException("A vehicle is required to create an intervention");
+        }
 
         boolean exist = interventionRepository.existsByVehicleIdAndTypeAndDescription(
                 intervention.getVehicle().getId(),
@@ -61,19 +136,17 @@ public class InterventionService implements IInterventionService {
         );
 
         if (exist) {
-            throw new AllReadyExistException("Intervention already exists with id " + intervention.getId());
-        } else {
-            log.warn("Set vehicle and mechanic into intervention !");
-            return interventionRepository.save(intervention);
+            throw new AllReadyExistException(
+                    "Intervention already exists for vehicle id " + intervention.getVehicle().getId());
         }
+
+        return interventionRepository.save(intervention);
     }
 
     @Override
     public Intervention updateIntervention(Long id, Intervention intervention) {
 
-        Intervention interv = interventionRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Intervention not found with id : " + id));
+        Intervention interv = findOrThrow(id);
 
         interv.setDiagnostic(intervention.getDiagnostic());
         interv.setType(intervention.getType());
@@ -92,26 +165,23 @@ public class InterventionService implements IInterventionService {
     @Override
     public Intervention assignMechanic(Long id, Mechanic mechanic) {
 
-        Intervention intervention = interventionRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Intervention not found with id : " + id));
+        Intervention intervention = findOrThrow(id);
 
-        Mechanic mechanic1 = mechanicRepository.findById(mechanic.getId())
-                .orElseThrow(() ->
-                        new RuntimeException("Mechanic not found with id : " + mechanic.getId()));
+        Mechanic found = mechanicRepository.findById(mechanic.getId())
+                .orElseThrow(() -> new RuntimeException("Mechanic not found with id : " + mechanic.getId()));
 
-        if (!mechanic1.isAvailable()) {
+        if (!found.isAvailable()) {
             throw new IllegalStateException("This mechanic is currently not available.");
         }
 
-        intervention.setMechanic(mechanic1);
+        intervention.setMechanic(found);
 
         if (intervention.getStatus() == QUOTATION_TO_VALIDATE) {
             intervention.setStatus(UNDER_REPAIR);
         }
 
-        mechanic1.setAvailable(false);
-        mechanicRepository.save(mechanic1);
+        found.setAvailable(false);
+        mechanicRepository.save(found);
 
         return interventionRepository.save(intervention);
     }
@@ -119,13 +189,11 @@ public class InterventionService implements IInterventionService {
     @Override
     public Intervention setEstimatedCost(Long id, Double cost) {
 
-        Intervention intervention = interventionRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Intervention not found with id : " + id));
-
         if (cost == null || cost <= 0) {
             throw new IllegalArgumentException("Estimated cost must be greater than 0");
         }
+
+        Intervention intervention = findOrThrow(id);
 
         intervention.setEstimatedCost(cost);
 
@@ -139,251 +207,122 @@ public class InterventionService implements IInterventionService {
     @Override
     public Intervention addDiagnostic(Long id, String diagnostic) {
 
-        Intervention intervention = interventionRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Intervention not found with id : " + id));
+        Intervention intervention = findOrThrow(id);
 
         if (intervention.getStatus() != RECEIVED) {
-            throw new IllegalStateException("Cannot add diagnostic");
+            throw new IllegalStateException("Cannot add diagnostic: intervention must be RECEIVED");
         }
 
         Status previousStatus = intervention.getStatus();
-        Status newStatus = DIAGNOSTIC_IN_PROGRESS;
 
         intervention.setDiagnostic(diagnostic);
-        intervention.setStatus(newStatus);
+        intervention.setStatus(DIAGNOSTIC_IN_PROGRESS);
 
         Intervention saved = interventionRepository.save(intervention);
 
-        InterventionHistory history = new InterventionHistory();
-        history.setIntervention(saved);
-        history.setOldStatus(previousStatus);
-        history.setNewStatus(newStatus);
-        history.setComment("Technical diagnostic added by mechanic.");
-        history.setAuthor(
-                saved.getMechanic() != null
-                        ? saved.getMechanic().getName()
-                        : "SYSTEM");
-        history.setDate(LocalDateTime.now());
-
-        historyRepository.save(history);
+        saveHistory(saved, previousStatus, DIAGNOSTIC_IN_PROGRESS,
+                "Technical diagnostic added by mechanic.", authorOf(saved));
 
         return saved;
     }
 
     @Override
     public Intervention changeStatus(Long id, Status newStatus, String author) {
-        Intervention intervention = interventionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Intervention not found"));
 
+        Intervention intervention = findOrThrow(id);
         Status currentStatus = intervention.getStatus();
 
-        boolean valid = switch (currentStatus) {
+        boolean valid = (currentStatus == newStatus) || (newStatus == Status.CANCELLED) || switch (currentStatus) {
             case RECEIVED -> newStatus == Status.DIAGNOSTIC_IN_PROGRESS;
             case DIAGNOSTIC_IN_PROGRESS -> newStatus == Status.QUOTATION_TO_VALIDATE;
             case QUOTATION_TO_VALIDATE -> newStatus == Status.UNDER_REPAIR;
             case UNDER_REPAIR -> newStatus == Status.COMPLETED;
             case COMPLETED -> newStatus == Status.RETURNED;
-            case RETURNED -> false;
             default -> false;
         };
 
-        if ("COMPLETED".equals(intervention.getStatus())) {
-            mechanicRepository.findById(intervention.getMechanic().getId())
-                    .ifPresent(mechanic -> {
-                        mechanic.setAvailable(true);
-                        mechanicRepository.save(mechanic);
-                    });
-        }
 
         if (!valid) {
-            throw new IllegalStateException("Transition from " + currentStatus + " to " + newStatus + " forbidden.");
+            throw new IllegalStateException(
+                    "Transition from " + currentStatus + " to " + newStatus + " forbidden.");
         }
 
-        InterventionHistory history = new InterventionHistory();
-        history.setIntervention(intervention);
-        history.setOldStatus(currentStatus);
-        history.setNewStatus(newStatus);
-        history.setDate(LocalDateTime.now());
-        history.setAuthor(author);
-        historyRepository.save(history);
+        // Rules :
+        if (newStatus == QUOTATION_TO_VALIDATE) {
+            if (intervention.getEstimatedCost() == null || intervention.getEstimatedCost() <= 0) {
+                throw new IllegalArgumentException(
+                        "RG-AUTO-05: Estimated cost is required before switching to Quotation to Validate status.");
+            }
+        }
+
+        if (newStatus == UNDER_REPAIR) {
+            if (intervention.getMechanic() == null || intervention.getMechanic().getId() == null) {
+                throw new IllegalArgumentException(
+                        "RG-AUTO-06: A mechanic must be assigned before switching to Under Repair status.");
+            }
+        }
+
+        if (newStatus == RETURNED) {
+            intervention.setClosureDate(LocalDateTime.now());
+            releaseMechanic(intervention);
+        }
 
         intervention.setStatus(newStatus);
+        Intervention saved = interventionRepository.save(intervention);
 
-        return interventionRepository.save(intervention);
+        saveHistory(saved, currentStatus, newStatus, null, author);
+
+        return saved;
     }
 
     @Override
     public Intervention complete(Long id) {
 
-        Intervention intervention = interventionRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Intervention not found with id : " + id));
+        Intervention intervention = findOrThrow(id);
 
         if (intervention.getStatus() != UNDER_REPAIR) {
-            throw new IllegalStateException("Intervention must be IN_REPAIR");
+            throw new IllegalStateException("Intervention must be UNDER_REPAIR");
         }
 
         Status previousStatus = intervention.getStatus();
 
-        intervention.setStatus(Status.COMPLETED);
-        intervention.setClosureDate(LocalDate.now().atStartOfDay());
+        intervention.setStatus(COMPLETED);
+        intervention.setClosureDate(LocalDateTime.now());
 
-        interventionRepository.save(intervention);
+        Intervention saved = interventionRepository.save(intervention);
 
-        InterventionHistory history = new InterventionHistory();
-        history.setIntervention(intervention);
-        history.setOldStatus(previousStatus);
-        history.setNewStatus(Status.COMPLETED);
-        history.setComment("Intervention completed");
-        history.setAuthor(
-                intervention.getMechanic() != null
-                        ? intervention.getMechanic().getName()
-                        : "SYSTEM");
-        history.setDate(LocalDateTime.now());
+        saveHistory(saved, previousStatus, COMPLETED,
+                "Intervention completed", authorOf(saved));
 
-        historyRepository.save(history);
-
-        return intervention;
+        return saved;
     }
 
     @Override
     public Intervention returnIntervention(Long id) {
-        Intervention intervention = interventionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Intervention not found with id : " + id));
 
-        if (intervention.getStatus() != Status.COMPLETED) {
+        Intervention intervention = findOrThrow(id);
+
+        if (intervention.getStatus() != COMPLETED) {
             throw new IllegalStateException("The intervention must be COMPLETED before return");
         }
 
         Status oldStatus = intervention.getStatus();
+        String author = authorOf(intervention);
 
-        intervention.setStatus(Status.RETURNED);
+        intervention.setStatus(RETURNED);
         intervention.setClosureDate(LocalDateTime.now());
+        releaseMechanic(intervention);
 
-        if (intervention.getMechanic() != null) {
-            Mechanic mechanic = intervention.getMechanic();
-            mechanic.setAvailable(true);
-            mechanicRepository.save(mechanic);
-        }
+        Intervention saved = interventionRepository.save(intervention);
 
-        Intervention savedIntervention = interventionRepository.save(intervention);
+        saveHistory(saved, oldStatus, RETURNED,
+                "Vehicle returned to the client and mechanic released.", author);
 
-        InterventionHistory history = new InterventionHistory();
-        history.setIntervention(savedIntervention);
-        history.setOldStatus(oldStatus);
-        history.setNewStatus(Status.RETURNED);
-        history.setComment("Vehicle returned to the client and mechanic released.");
-        history.setAuthor(savedIntervention.getMechanic() != null ? savedIntervention.getMechanic().getName() : "SYSTEM");
-        history.setDate(LocalDateTime.now());
-
-        historyRepository.save(history);
-
-        return savedIntervention;
+        return saved;
     }
-
 
     @Override
     public Intervention returnVehicle(Long id) {
-
-        Intervention intervention = interventionRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Intervention not found with id : " + id));
-
-        if (intervention.getStatus() != Status.COMPLETED) {
-            throw new IllegalStateException("Intervention must be COMPLETED before return");
-        }
-
-        Status previousStatus = intervention.getStatus();
-
-        intervention.setStatus(Status.RETURNED);
-
-        if (intervention.getMechanic() != null) {
-            Mechanic mechanic = intervention.getMechanic();
-            mechanic.setAvailable(true);
-            mechanicRepository.save(mechanic);
-        }
-
-        interventionRepository.save(intervention);
-
-        InterventionHistory history = new InterventionHistory();
-        history.setIntervention(intervention);
-        history.setOldStatus(previousStatus);
-        history.setNewStatus(Status.RETURNED);
-        history.setComment("Vehicle returned to client");
-        history.setAuthor(
-                intervention.getMechanic() != null
-                        ? intervention.getMechanic().getName()
-                        : "SYSTEM");
-        history.setDate(LocalDateTime.now());
-
-        historyRepository.save(history);
-
-        return intervention;
+        return returnIntervention(id);
     }
-
-    @Override
-    public List<Intervention> getInterventionsByMechanic(Long mechanicId) {
-
-        Mechanic mechanic = mechanicRepository.findById(mechanicId)
-                .orElseThrow(() ->
-                        new RuntimeException("Mechanic not found : " + mechanicId));
-
-        return mechanic.getInterventions();
-    }
-
-    @Override
-    public List<Intervention> getInterventionsByVehicle(Long vehicleId) {
-
-        Vehicle vehicle = vehicleRepository.findById(vehicleId)
-                .orElseThrow(() ->
-                        new RuntimeException("Vehicle not found : " + vehicleId));
-
-        return vehicle.getInterventions();
-    }
-
-    @Override
-    public List<Intervention> getDelayedInterventions() {
-        LocalDateTime now = LocalDateTime.now();
-        List<Status> excludedStatuses = List.of(Status.RETURNED, Status.CANCELLED);
-        return interventionRepository.findDelayedInterventions(now, excludedStatuses);
-    }
-
-
-    @Override
-    public List<Intervention> getOverdueInterventions() {
-
-        return interventionRepository
-                .findByEstimatedReturnDateBeforeAndStatusNot(
-                        LocalDate.now().atStartOfDay(),
-                        Status.RETURNED
-                );
-    }
-
-    @Override
-    public Double calculateTotalCost() {
-
-        List<Intervention> interventions = interventionRepository.findAll();
-
-        double sum = 0;
-
-        for (Intervention intervention : interventions) {
-            if (intervention.getEstimatedCost() != null) {
-                sum += intervention.getEstimatedCost();
-            }
-        }
-
-        return sum;
-    }
-
-    @Override
-    public List<Intervention> getInterventionsByType(InterventionType type) {
-        return interventionRepository.findInterventionByType(type);
-    }
-
-    @Override
-    public List<Intervention> getInterventionsByPriority(Priority priority) {
-        return interventionRepository.findByPriority(priority);
-    }
-
 }
