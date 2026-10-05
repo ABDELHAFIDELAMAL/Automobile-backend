@@ -20,8 +20,6 @@ public interface IInterventionService {
     Intervention complete(Long id);
     Intervention returnIntervention(Long id);
     Intervention returnVehicle(Long id);
-    List<Intervention> getInterventionsByMechanic(Long mechanicId);
-    List<Intervention> getInterventionsByVehicle(Long vehicleId);
     List<Intervention> getDelayedInterventions();
     List<Intervention> getOverdueInterventions();
     Double calculateTotalCost();

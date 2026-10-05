@@ -22,7 +22,7 @@ public class AuthController {
     private final String keycloakUrl = "http://localhost:8080";
     private final String realm = "AutomobileRealm";
     private final String clientId = "AutomobileClient";
-    private final String clientSecret = "mOhpA6Ywa8PxDcas16D4dAoGM2f2dAHAUmYw0CXoyOrahqCv7zZM25KkY286E8FUyqKdIN1SEp2MLMvGcNOwko";
+    private final String clientSecret = "IzP9XPRzTByiclsEugKJeFN94ypPf7uziR62ijj1HeJnl0i9KcT5Em7RkqKXL30pvGm3AivRv1dPBupbRBmMBo";
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> register(@RequestBody UserDto dto) {
