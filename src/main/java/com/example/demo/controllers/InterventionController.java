@@ -110,6 +110,17 @@ public class InterventionController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @DeleteMapping("/{id}/cancel")
+    public ResponseEntity<ApiResponse> cancelIntervention(@PathVariable Long id) {
+        try {
+            interventionService.cancelIntervention(id);
+            return ResponseEntity.ok(new ApiResponse("Intervention cancelled successfully" , null , true));
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage() , null , false));
+        }
+    }
+
+
     @GetMapping(path = "/calculate-total-cost")
     public ResponseEntity<ApiResponse> calculateTotalCost() {
         Double data = interventionService.calculateTotalCost();

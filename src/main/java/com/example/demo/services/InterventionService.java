@@ -123,6 +123,12 @@ public class InterventionService implements IInterventionService {
     }
 
     @Override
+    public void cancelIntervention(Long id) {
+        Intervention intervention = findOrThrow(id);
+        interventionRepository.delete(intervention);
+    }
+
+    @Override
     public Intervention createIntervention(Intervention intervention) {
 
         if (intervention.getVehicle() == null || intervention.getVehicle().getId() == null) {
