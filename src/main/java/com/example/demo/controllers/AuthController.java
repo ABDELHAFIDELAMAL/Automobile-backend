@@ -21,11 +21,16 @@ public class AuthController {
     private final WebClient webClient = WebClient.create();
     private final String keycloakUrl = "http://localhost:8080";
     private final String realm = "AutomobileRealm";
-    private final String clientId = "AutomobileSpringClient";
+    private final String clientId = "AutomobileClient";
     private final String clientSecret = "mOhpA6Ywa8PxDcas16D4dAoGM2f2dAHAUmYw0CXoyOrahqCv7zZM25KkY286E8FUyqKdIN1SEp2MLMvGcNOwko";
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> register(@RequestBody UserDto dto) {
+        if (!dto.isTerms()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse("You must accept the terms and conditions", null, false));
+        }
+
         try {
             String adminToken = fetchAdminToken();
 
@@ -39,6 +44,7 @@ public class AuthController {
                     "username", dto.getUsername(),
                     "email", dto.getEmail(),
                     "enabled", true,
+                    "emailVerified", true,
                     "credentials", List.of(passwordCredential)
             );
 
@@ -59,6 +65,33 @@ public class AuthController {
         } catch (WebClientResponseException e) {
             String errorMessage = "Keycloak error: " + e.getResponseBodyAsString();
             return ResponseEntity.status(e.getStatusCode())
+                    .body(new ApiResponse(errorMessage, null, false));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse(e.getMessage(), null, false));
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse> login(@RequestBody UserDto dto) {
+        try {
+            Map<?, ?> response = webClient.post()
+                    .uri(keycloakUrl + "/realms/" + realm + "/protocol/openid-connect/token")
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .body(BodyInserters.fromFormData("grant_type", "password")
+                            .with("client_id", clientId)
+                            .with("client_secret", clientSecret)
+                            .with("username", dto.getUsername())
+                            .with("password", dto.getPassword()))
+                    .retrieve()
+                    .bodyToMono(Map.class)
+                    .block();
+
+            return ResponseEntity.ok(new ApiResponse("Login successful", response, true));
+
+        } catch (WebClientResponseException e) {
+            String errorMessage = "Invalid username or password";
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ApiResponse(errorMessage, null, false));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

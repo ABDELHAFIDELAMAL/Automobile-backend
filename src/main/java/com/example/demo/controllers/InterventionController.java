@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/v1/interventions")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:4200")
 public class InterventionController {
 
     private final IInterventionService interventionService;
