@@ -25,4 +25,5 @@ public interface IInterventionService {
     Double calculateTotalCost();
     List<Intervention> getInterventionsByType(InterventionType type);
     List<Intervention> getInterventionsByPriority(Priority priority);
+    void cancelIntervention(Long id);
 }
