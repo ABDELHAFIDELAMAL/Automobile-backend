@@ -113,4 +113,9 @@ public class VehicleService implements IVehicleService {
         }
         return result;
     }
+
+    @Override
+    public void deleteAllVehicles() {
+        this.vehicleRepository.deleteAll();
+    }
 }

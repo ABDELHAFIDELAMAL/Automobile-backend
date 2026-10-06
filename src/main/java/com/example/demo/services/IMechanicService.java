@@ -18,4 +18,5 @@ public interface IMechanicService {
     List<Intervention> getInterventions(Long id);
     Map<Long, Integer> getWorkload();
     List<Mechanic> getMechanicsBySpecialty(Specialty specialty);
+    void deleteAllMechanics();
 }
