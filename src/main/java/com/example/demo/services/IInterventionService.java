@@ -26,4 +26,5 @@ public interface IInterventionService {
     List<Intervention> getInterventionsByType(InterventionType type);
     List<Intervention> getInterventionsByPriority(Priority priority);
     void cancelIntervention(Long id);
+    void cancelAllInterventions();
 }

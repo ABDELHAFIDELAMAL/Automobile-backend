@@ -143,4 +143,11 @@ public class InterventionController {
         ApiResponse response = new ApiResponse("Interventions fetched by priority successfully", data, true);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @DeleteMapping(path = "/cancel/all")
+    public ResponseEntity<ApiResponse> cancelAllInterventions() {
+        this.interventionService.cancelAllInterventions();
+        ApiResponse response = new ApiResponse("cancel all interventions successful" , null , true );
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

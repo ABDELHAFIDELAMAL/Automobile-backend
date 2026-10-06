@@ -110,4 +110,11 @@ public class MechanicController {
             return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
         }
     }
+
+    @DeleteMapping(path = "/delete/all")
+    public ResponseEntity<ApiResponse> deleteAllMechanics() {
+        this.mechanicService.deleteAllMechanics();
+        ApiResponse response = new ApiResponse("Delete all mechanics successful" , null , true );
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

@@ -15,4 +15,5 @@ public interface IVehicleService {
     Vehicle returnVehicle(Long id, String username, String userRole);
     List<Vehicle> getVehicleByStatus(Status status);
     List<Vehicle> search(String text);
+    void deleteAllVehicles() ;
 }

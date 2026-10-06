@@ -96,4 +96,11 @@ public class VehicleController {
         ApiResponse response = new ApiResponse("Search results fetched successfully", data, true);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @DeleteMapping(path = "/delete/all")
+    public ResponseEntity<ApiResponse> deleteAllVehicles() {
+        this.vehicleService.deleteAllVehicles();
+        ApiResponse response = new ApiResponse("Delete all vehicles successful" , null , true );
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

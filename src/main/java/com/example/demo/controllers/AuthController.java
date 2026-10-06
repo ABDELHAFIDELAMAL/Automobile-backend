@@ -72,33 +72,6 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<ApiResponse> login(@RequestBody UserDto dto) {
-        try {
-            Map<?, ?> response = webClient.post()
-                    .uri(keycloakUrl + "/realms/" + realm + "/protocol/openid-connect/token")
-                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                    .body(BodyInserters.fromFormData("grant_type", "password")
-                            .with("client_id", clientId)
-                            .with("client_secret", clientSecret)
-                            .with("username", dto.getUsername())
-                            .with("password", dto.getPassword()))
-                    .retrieve()
-                    .bodyToMono(Map.class)
-                    .block();
-
-            return ResponseEntity.ok(new ApiResponse("Login successful", response, true));
-
-        } catch (WebClientResponseException e) {
-            String errorMessage = "Invalid username or password";
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ApiResponse(errorMessage, null, false));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse(e.getMessage(), null, false));
-        }
-    }
-
     private String fetchAdminToken() {
         Map<?, ?> response = webClient.post()
                 .uri(keycloakUrl + "/realms/" + realm + "/protocol/openid-connect/token")

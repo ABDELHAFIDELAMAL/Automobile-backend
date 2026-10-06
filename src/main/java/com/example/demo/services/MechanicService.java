@@ -137,4 +137,9 @@ public class MechanicService implements IMechanicService {
     public List<Mechanic> getMechanicsBySpecialty(Specialty specialty) {
         return mechanicRepository.findMechanicBySpecialty(specialty);
     }
+
+    @Override
+    public void deleteAllMechanics() {
+        this.mechanicRepository.deleteAll();
+    }
 }
