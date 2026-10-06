@@ -125,6 +125,7 @@ public class InterventionService implements IInterventionService {
     @Override
     public void cancelIntervention(Long id) {
         Intervention intervention = findOrThrow(id);
+        intervention.getMechanic().setAvailable(false);
         interventionRepository.delete(intervention);
     }
 
