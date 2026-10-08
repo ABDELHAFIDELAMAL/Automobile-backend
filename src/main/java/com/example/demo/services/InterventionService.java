@@ -186,21 +186,22 @@ public class InterventionService implements IInterventionService {
 
         Intervention intervention = findOrThrow(id);
 
-        Mechanic found = mechanicRepository.findById(mechanic.getId())
+        Mechanic mechanic1 = mechanicRepository.findById(mechanic.getId())
                 .orElseThrow(() -> new RuntimeException("Mechanic not found with id : " + mechanic.getId()));
 
-        if (!found.isAvailable()) {
+        if (!mechanic1.isAvailable()) {
             throw new IllegalStateException("This mechanic is currently not available.");
         }
 
-        intervention.setMechanic(found);
+        intervention.setMechanic(mechanic1);
 
         if (intervention.getStatus() == QUOTATION_TO_VALIDATE) {
             intervention.setStatus(UNDER_REPAIR);
         }
 
-        found.setAvailable(false);
-        mechanicRepository.save(found);
+
+        mechanic1.setAvailable(false);
+        mechanicRepository.save(mechanic1);
 
         return interventionRepository.save(intervention);
     }

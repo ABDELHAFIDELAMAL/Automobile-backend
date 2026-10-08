@@ -21,8 +21,8 @@ public class AuthController {
     private final WebClient webClient = WebClient.create();
     private final String keycloakUrl = "http://localhost:8080";
     private final String realm = "AutomobileRealm";
-    private final String clientId = "AutomobileClient";
-    private final String clientSecret = "IzP9XPRzTByiclsEugKJeFN94ypPf7uziR62ijj1HeJnl0i9KcT5Em7RkqKXL30pvGm3AivRv1dPBupbRBmMBo";
+    private final String clientId = "AutomobileSpringClient";
+    private final String clientSecret = "68lS7zuOALScdgDtBo6Bq65QXLxlGPYm3qJykI2OqdQKYsVcCHnvHDYVndlNsppyjkWfGpQdBynFNIpiyFyE48";
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> register(@RequestBody UserDto dto) {
