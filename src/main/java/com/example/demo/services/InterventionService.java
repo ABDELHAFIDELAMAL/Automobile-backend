@@ -125,14 +125,18 @@ public class InterventionService implements IInterventionService {
     @Override
     public void cancelIntervention(Long id) {
         Intervention intervention = findOrThrow(id);
-        intervention.getMechanic().setAvailable(false);
+        if(intervention.getMechanic() != null) {
+            intervention.getMechanic().setAvailable(true);
+        }
         interventionRepository.delete(intervention);
     }
 
     @Override
     public void cancelAllInterventions() {
         for(Intervention intervention : interventionRepository.findAll()){
-            intervention.getMechanic().setAvailable(false);
+            if (intervention.getMechanic() != null) {
+                intervention.getMechanic().setAvailable(true);
+            }
         }
         this.interventionRepository.deleteAll();
     }
